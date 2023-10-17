@@ -112,6 +112,7 @@
     </ClCompile>
     <ClCompile Include="FreePlayTraining.cpp" />
     <ClCompile Include="GuiBase.cpp" />
+    <ClCompile Include="PopMode.cpp" />
     <ClCompile Include="RecoveryMode.cpp" />
     <ClCompile Include="TrainingMode.cpp" />
     <ClCompile Include="Utility.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="GuiBase.h" />
     <ClInclude Include="FreePlayTraining.h" />
+    <ClInclude Include="PopMode.h" />
     <ClInclude Include="RecoveryMode.h" />
     <ClInclude Include="TrainingMode.h" />
     <ClInclude Include="Utility.h" />

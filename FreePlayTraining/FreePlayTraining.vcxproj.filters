@@ -96,6 +96,12 @@
     <ClCompile Include="GoalieMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FreePlayCar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PopMode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imgui_rangeslider.h">
@@ -171,6 +177,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GoalieMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FreePlayCar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PopMode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

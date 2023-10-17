@@ -25,7 +25,6 @@ private:
 
 	double TimeLeft = STARTING_TIME;
 	double CurrentTime = 0;
-	LinearColor Color{ 255, 255, 255, 255 };
 
 	void StartMode(GameInformation*);
 	void DecayBoost(GameInformation*);

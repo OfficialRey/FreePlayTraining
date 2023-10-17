@@ -17,6 +17,7 @@ private:
 
 	double EndTime = 0;
 	double TimeRemaining = 0;
+	bool Running = false;
 
 	void ExecuteTimer(GameInformation* gameInfo);
 	void RenderTimer(CanvasWrapper canvas);

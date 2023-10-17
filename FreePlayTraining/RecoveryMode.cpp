@@ -46,7 +46,7 @@ void RecoveryMode::SetTargetPosition(GameInformation* gameInfo) {
 	Vector playerDirection = velocity.getNormalized();
 	float angle = Vector::dot(playerToBall, playerDirection);
 
-	RecoveryTime = BASE_RECOVERY_TIME + (distance / MAX_SPEED) + (RecoveryPosition.Z / MAX_SPEED) - (1.5 * angle * distance / MAX_SPEED);
+	RecoveryTime = BASE_RECOVERY_TIME + ((distance + RecoveryPosition.Z + RecoveryTarget.Z+ velocity.magnitude()) - (1.5 * angle * distance)) / MAX_SPEED;
 }
 
 void RecoveryMode::TickClock(GameInformation* gameInfo) {
@@ -83,7 +83,7 @@ void RecoveryMode::RunGame(GameInformation* gameInfo) {
 }
 
 void RecoveryMode::EnableGame(GameInformation*) {
-
+	RecoveryTime = BASE_RECOVERY_TIME;
 }
 
 void RecoveryMode::OnDisable(GameInformation*) {

@@ -5,6 +5,7 @@
 #include "RecoveryMode.h"
 #include "PathingMode.h"
 #include "GoalieMode.h"
+#include "PopMode.h"
 
 #include "Utility.h"
 
@@ -55,6 +56,10 @@ void FreePlayTraining::onLoad()
 	cvarManager->registerNotifier("Goalie", [this](std::vector<std::string> args) {
 		ChangeCurrentMode(new GoalieMode{});
 		}, "", PERMISSION_ALL);
+
+	cvarManager->registerNotifier("Pop", [this](std::vector<std::string> args) {
+		ChangeCurrentMode(new PopMode{});
+		}, "", PERMISSION_ALL);
 }
 
 void FreePlayTraining::ChangeCurrentMode(TrainingMode* mode) {
@@ -86,7 +91,7 @@ void FreePlayTraining::Run() {
 		ChangeCurrentMode(NULL);
 		return; 
 	}
-	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
+	if (!CurrentMode) { return; }
 	CurrentMode->Run(GameInfo);
 }
 

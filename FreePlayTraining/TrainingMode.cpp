@@ -31,10 +31,15 @@ void TrainingMode::RenderTimer(CanvasWrapper canvas) {
 void TrainingMode::Run(GameInformation* gameInfo) {
 	if (IsGameOver) {
 		EndTime -= gameInfo->DeltaTime;
-		return; }
+		return; 
+	}
 	if (TimeRemaining > 0) {
 		ExecuteTimer(gameInfo);
 		return;
+	}
+	if (!Running) {
+		Running = true;
+		EnableGame(gameInfo);
 	}
 	CheckGameOver();
 	RunGame(gameInfo);

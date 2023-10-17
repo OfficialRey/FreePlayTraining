@@ -101,6 +101,6 @@ void PathingMode::RenderGame(CanvasWrapper canvas) {
 void PathingMode::RenderGameEnd(CanvasWrapper canvas) {
 	std::string result = "Result: " + GetTimeString(CurrentTime);
 	canvas.SetPosition(Vector2F{ CalculateCenterPosition(canvas, result, FONT_SIZE_MEDIUM),  (float)(canvas.GetSize().Y * 0.2) });
-	canvas.SetColor(Color);
+	canvas.SetColor(COLOR_WHITE);
 	canvas.DrawString(result, FONT_SIZE_MEDIUM, FONT_SIZE_MEDIUM, true);
 }
