@@ -8,13 +8,18 @@
 
 #include "Utility.h"
 
-BAKKESMOD_PLUGIN(FreePlayTraining, "write a plugin description here", plugin_version, PLUGINTYPE_FREEPLAY)
+BAKKESMOD_PLUGIN(FreePlayTraining, "A plugin to help develop several abilities using freeplay", plugin_version, PLUGINTYPE_FREEPLAY)
 
 std::shared_ptr<CVarManagerWrapper> _globalCvarManager;
+
+FreePlayTraining::~FreePlayTraining() {
+	delete GameInfo;
+}
 
 void FreePlayTraining::onLoad()
 {
 	_globalCvarManager = cvarManager;
+	GameInfo = new GameInformation{ GetLocalCar(), GetBall()};
 
 	// Register game loop
 	gameWrapper->HookEvent("Function Engine.Interaction.Tick", [this](std::string eventName) {
@@ -30,6 +35,9 @@ void FreePlayTraining::onLoad()
 		});
 	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this](std::string eventName) {
 		OnGoalScored();
+		});
+	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", [this](std::string eventName) {
+		OnReplayStart();
 		});
 	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", [this](std::string eventName) {
 		OnReplayEnd();
@@ -52,7 +60,7 @@ void FreePlayTraining::onLoad()
 void FreePlayTraining::ChangeCurrentMode(TrainingMode* mode) {
 	// Free memory of old TrainingMode
 	if (CurrentMode) { 
-		CurrentMode->OnDisable(BuildInfoPackage());
+		CurrentMode->OnDisable(GameInfo);
 		gameWrapper->UnregisterDrawables();
 		delete CurrentMode;
 	}
@@ -63,54 +71,50 @@ void FreePlayTraining::ChangeCurrentMode(TrainingMode* mode) {
 	gameWrapper->RegisterDrawable([this](CanvasWrapper canvas) {
 		CurrentMode->Render(canvas);
 		});
-	CurrentMode->OnEnable(BuildInfoPackage());
+	CurrentMode->OnEnable(GameInfo);
 }
 
-void FreePlayTraining::CalculateDeltaTime() {
-	double currentTime = GetTimeSeconds();
-	DeltaTime = currentTime - OldTime;
-	OldTime = currentTime;
-}
-
-GameInformation FreePlayTraining::BuildInfoPackage() {
-	return GameInformation{ GetBall(), GetLocalCar(), cvarManager, DeltaTime };
+void FreePlayTraining::UpdateInfoPackage() {
+	GameInfo->Update(GetLocalCar(), GetBall());
 }
 
 // Loop
 
 void FreePlayTraining::Run() {
-	GameInformation gameInfo = BuildInfoPackage();
-	if (!gameInfo.IsValid()) { return; }
+	UpdateInfoPackage();
 	if (!IsInFreeplay()) { 
 		ChangeCurrentMode(NULL);
 		return; 
 	}
-	CalculateDeltaTime();
-	if (!CurrentMode) { return; }
-	CurrentMode->Run(gameInfo);
+	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
+	CurrentMode->Run(GameInfo);
 }
 
 // Events
 
 void FreePlayTraining::OnBallHit() {
-	if (!CurrentMode) { return; }
-	GameInformation gameInfo = BuildInfoPackage();
-	if (!gameInfo.IsValid()) { return; }
-	CurrentMode->OnBallHit(gameInfo);
+	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
+	CurrentMode->OnBallHit(GameInfo);
 }
 
 void FreePlayTraining::OnCollectBoost() {
-	if (!CurrentMode) { return; }
-	GameInformation gameInfo = BuildInfoPackage();
-	if (!gameInfo.IsValid()) { return; }
-	CurrentMode->OnBoostPickUp(gameInfo);
+	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
+	CurrentMode->OnBoostPickUp(GameInfo);
 }
 
 void FreePlayTraining::OnGoalScored() {
-	if (!CurrentMode) { return; }
-	GameInformation gameInfo = BuildInfoPackage();
-	if (!gameInfo.IsValid()) { return; }
-	CurrentMode->OnGoalScored(gameInfo);
+	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
+	CurrentMode->OnGoalScored(GameInfo);
+}
+
+void FreePlayTraining::OnReplayStart() {
+	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
+	CurrentMode->OnReplayBegin(GameInfo);
+}
+
+void FreePlayTraining::OnReplayEnd() {
+	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
+	CurrentMode->OnReplayEnd(GameInfo);
 }
 
 // Util

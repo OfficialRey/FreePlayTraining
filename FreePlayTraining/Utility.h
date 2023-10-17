@@ -39,16 +39,26 @@
 
 #define CAR_HEIGHT 90
 
+#define FULL_BOOST 100
+#define START_BOOST_AMOUNT 0.33
+#define SMALL_BOOST_AMOUNT 0.12
+#define BIG_BOOST_AMOUNT 1.0
+
 // Custom Values
 
 #define MIN_RECOVERY_DISTANCE MAX_SPEED
 
 #define BOOST_MULTIPLIER (2.0 / 7.0)
+#define MILLI_SECONDS 1000.0
 
 // Render Options
 
 #define COLOR_WHITE LinearColor{255, 255, 255, 255}
-#define FONT_SIZE_SMALL 6
+#define COLOR_GREEN LinearColor{0, 255, 0, 255}
+#define COLOR_YELLOW LinearColor{255, 255, 0, 255}
+#define COLOR_RED LinearColor{255, 0, 0, 255}
+#define FONT_SIZE_SMALL 4
+#define FONT_SIZE_MEDIUM 6
 
 float GetRandomFieldX();
 
@@ -61,3 +71,11 @@ Vector GetRandomCarSpeed();
 Rotator GetRandomRotation();
 
 double GetTimeSeconds();
+
+double GetTimeMilliSeconds();
+
+std::string GetTimeString(double seconds);
+
+float CalculateCenterPosition(CanvasWrapper, std::string, float);
+
+LinearColor GetColorBasedOnTime(float time, int yellow, int green);

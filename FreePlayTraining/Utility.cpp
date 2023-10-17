@@ -31,5 +31,32 @@ Rotator GetRandomRotation() {
 }
 
 double GetTimeSeconds() {
-	return (double) (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()) / 1000.0;
+	return (double)(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()) / MILLI_SECONDS;
+}
+
+double GetTimeMilliSeconds() {
+	return (double)(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+}
+
+std::string GetTimeString(double time) {
+	float fractional, whole;
+
+	fractional = std::modf(time, &whole);
+
+	std::string seconds = std::to_string(int(whole));
+	std::string milliseconds = std::to_string(int(fractional * 100));
+	std::string result = seconds + "." + milliseconds;
+	return result;
+}
+
+float CalculateCenterPosition(CanvasWrapper canvas, std::string text, float fontSize) {
+	Vector2F size = canvas.GetStringSize(text, fontSize, fontSize);
+	return (canvas.GetSize().X / 2) - (size.X / 2);
+}
+
+LinearColor GetColorBasedOnTime(float time, int yellow, int green) {
+	LinearColor color = COLOR_RED;
+	if (time > green) { color = COLOR_GREEN; }
+	else if (time > yellow) { color = COLOR_YELLOW; }
+	return color;
 }

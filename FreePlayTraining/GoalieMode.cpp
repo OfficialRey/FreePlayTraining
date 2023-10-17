@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "GoalieMode.h"
 
-void GoalieMode::StartMode(GameInformation gameInfo) {
-	CarWrapper car = gameInfo.Car;
-	BallWrapper ball = gameInfo.Ball;
+void GoalieMode::StartMode(GameInformation* gameInfo) {
+	CarWrapper car = gameInfo->Car;
+	BallWrapper ball = gameInfo->Ball;
 
 	Vector ballPosition = Vector{ GetRandomFieldX() / 2, GetRandomFieldY() / 3, GetRandomFieldZ() / (float) 1.5 };
 	Vector ballToGoal = (ORANGE_GOAL - ballPosition) * SHOT_FACTOR;
@@ -29,32 +29,43 @@ void GoalieMode::CheckGameOver() {
 
 }
 
-void GoalieMode::RunGame(GameInformation gameInfo) {
+void GoalieMode::RunGame(GameInformation* gameInfo) {
 
 }
 
 
-void GoalieMode::EnableGame(GameInformation) {
+void GoalieMode::EnableGame(GameInformation*) {
 
 }
 
-void GoalieMode::OnDisable(GameInformation) {
+void GoalieMode::OnDisable(GameInformation*) {
 
 }
 
-void GoalieMode::OnBallHit(GameInformation gameInfo) {
+void GoalieMode::OnBallHit(GameInformation* gameInfo) {
 	StartMode(gameInfo);
 }
 
-void GoalieMode::OnGoalScored(GameInformation gameInfo) {
-	_globalCvarManager->log("Scored Goal!");
+void GoalieMode::OnGoalScored(GameInformation* gameInfo) {
+
+}
+
+void GoalieMode::OnReplayBegin(GameInformation*) {
+
+}
+
+void GoalieMode::OnReplayEnd(GameInformation* gameInfo) {
 	StartMode(gameInfo);
 }
 
-void GoalieMode::OnBoostPickUp(GameInformation) {
+void GoalieMode::OnBoostPickUp(GameInformation*) {
 
 }
 
 void GoalieMode::RenderGame(CanvasWrapper canvas) {
+
+}
+
+void GoalieMode::RenderGameEnd(CanvasWrapper canvas) {
 
 }

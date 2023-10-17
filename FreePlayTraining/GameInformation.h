@@ -2,13 +2,39 @@
 
 #include "pch.h"
 
+#include "Utility.h"
+
+#include "FreePlayCar.h"
+
 struct GameInformation {
-	BallWrapper Ball;
-	CarWrapper Car;
+
+public:
+
+	CarWrapper Car = 0;
+	BallWrapper Ball = 0;
 	std::shared_ptr<CVarManagerWrapper> CVarManager;
+
 	double DeltaTime;
 
-	bool IsValid() {
-		return Ball && Car && CVarManager;
+	GameInformation(CarWrapper car, BallWrapper ball) {
+		Car = car;
+		Ball = ball;
+	}
+
+	void Update(CarWrapper car, BallWrapper ball) {
+		Car = car;
+		Ball = ball;
+
+		CalculateDeltaTime();
+	}
+
+private:
+
+	unsigned long long PreviousTime;
+
+	void CalculateDeltaTime() {
+		unsigned long long currentTime = GetTimeMilliSeconds();
+		DeltaTime = (currentTime - PreviousTime) / MILLI_SECONDS;
+		PreviousTime = currentTime;
 	}
 };

@@ -16,7 +16,7 @@ private:
 		AERIAL_REVERSE
 	};
 
-	void StartMode(GameInformation);
+	void StartMode(GameInformation*);
 
 public:
 
@@ -24,14 +24,17 @@ public:
 
 	virtual void CheckGameOver();
 
-	virtual void RunGame(GameInformation);
-	virtual void EnableGame(GameInformation);
-	virtual void OnDisable(GameInformation);
+	virtual void RunGame(GameInformation*);
+	virtual void EnableGame(GameInformation*);
+	virtual void OnDisable(GameInformation*);
 
-	virtual void OnBallHit(GameInformation);
-	virtual void OnBoostPickUp(GameInformation);
-	virtual void OnGoalScored(GameInformation);
+	virtual void OnBallHit(GameInformation*);
+	virtual void OnBoostPickUp(GameInformation*);
+	virtual void OnGoalScored(GameInformation*);
+	virtual void OnReplayBegin(GameInformation*);
+	virtual void OnReplayEnd(GameInformation*);
 
 	virtual void RenderGame(CanvasWrapper);
+	virtual void RenderGameEnd(CanvasWrapper)	;
 };
 

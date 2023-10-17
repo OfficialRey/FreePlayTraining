@@ -15,27 +15,28 @@
 constexpr auto plugin_version = stringify(VERSION_MAJOR) "." stringify(VERSION_MINOR) "." stringify(VERSION_PATCH) "." stringify(VERSION_BUILD);
 
 
-
-
 class FreePlayTraining : public BakkesMod::Plugin::BakkesModPlugin
 {
 
 private:
-	double OldTime;
-	double DeltaTime;
+	GameInformation* GameInfo;
 	TrainingMode* CurrentMode;
 
 	void onLoad() override;
 	void ChangeCurrentMode(TrainingMode*);
-	void CalculateDeltaTime();
 
-	GameInformation BuildInfoPackage();
+	void UpdateInfoPackage();
 
 public:
+
+	~FreePlayTraining();
+
 	void Run();
 	void OnBallHit();
 	void OnCollectBoost();
 	void OnGoalScored();
+	void OnReplayStart();
+	void OnReplayEnd();
 
 	ServerWrapper GetServerWrapper();
 	BallWrapper GetBall();
