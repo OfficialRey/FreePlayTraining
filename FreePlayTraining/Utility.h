@@ -2,6 +2,8 @@
 
 #include "pch.h"
 
+// Field Values
+
 #define FLOOR 0
 #define BALL_RADIUS 92.75
 #define CEILING 2044
@@ -10,12 +12,24 @@
 
 #define CORNER 1152
 
-
 #define SIDE_WALL 4096
 #define BACK_WALL 5120
 
 #define NO_CORNER_SIDE_WALL (SIDE_WALL - CORNER)
 #define NO_CORNER_BACK_WALL (BACK_WALL - CORNER)
+
+// Goal Values
+
+#define GOAL_HEIGHT 642.775
+#define GOAL_CENTER_HEIGHT (GOAL_HEIGHT / 2)
+
+#define GOAL_DEPTH 880
+#define BACK_GOAL (BACK_WALL + GOAL_DEPTH)
+
+#define BLUE_GOAL Vector{0, -BACK_GOAL, GOAL_CENTER_HEIGHT}
+#define ORANGE_GOAL Vector{0, BACK_GOAL, GOAL_CENTER_HEIGHT}
+
+// Game Constants
 
 #define MIN_ROTATION Vector{-16364, -32768, -32768}
 #define MAX_ROTATION Vector{16340, 32764, 32764}
@@ -23,9 +37,15 @@
 #define HALF_SPEED (MAX_SPEED / 2)
 #define QUARTER_SPEED (MAX_SPEED / 4)
 
+#define CAR_HEIGHT 90
+
+// Custom Values
+
 #define MIN_RECOVERY_DISTANCE MAX_SPEED
 
 #define BOOST_MULTIPLIER (2.0 / 7.0)
+
+// Render Options
 
 #define COLOR_WHITE LinearColor{255, 255, 255, 255}
 #define FONT_SIZE_SMALL 6

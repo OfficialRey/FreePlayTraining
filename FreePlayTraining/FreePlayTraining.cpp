@@ -4,6 +4,7 @@
 
 #include "RecoveryMode.h"
 #include "PathingMode.h"
+#include "GoalieMode.h"
 
 #include "Utility.h"
 
@@ -27,6 +28,12 @@ void FreePlayTraining::onLoad()
 	gameWrapper->HookEvent("Function TAGame.VehiclePickup_Boost_TA.Pickup", [this](std::string eventName) {
 		OnCollectBoost();
 		});
+	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this](std::string eventName) {
+		OnGoalScored();
+		});
+	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", [this](std::string eventName) {
+		OnReplayEnd();
+		});
 
 	// Register commands
 	cvarManager->registerNotifier("Recovery", [this](std::vector<std::string> args) {
@@ -35,6 +42,10 @@ void FreePlayTraining::onLoad()
 	
 	cvarManager->registerNotifier("Pathing", [this](std::vector<std::string> args) {
 		ChangeCurrentMode(new PathingMode{});
+		}, "", PERMISSION_ALL);
+
+	cvarManager->registerNotifier("Goalie", [this](std::vector<std::string> args) {
+		ChangeCurrentMode(new GoalieMode{});
 		}, "", PERMISSION_ALL);
 }
 
@@ -68,25 +79,38 @@ GameInformation FreePlayTraining::BuildInfoPackage() {
 // Loop
 
 void FreePlayTraining::Run() {
+	GameInformation gameInfo = BuildInfoPackage();
+	if (!gameInfo.IsValid()) { return; }
 	if (!IsInFreeplay()) { 
 		ChangeCurrentMode(NULL);
 		return; 
 	}
 	CalculateDeltaTime();
 	if (!CurrentMode) { return; }
-	CurrentMode->Run(BuildInfoPackage());
+	CurrentMode->Run(gameInfo);
 }
 
 // Events
 
 void FreePlayTraining::OnBallHit() {
 	if (!CurrentMode) { return; }
-	CurrentMode->OnBallHit(BuildInfoPackage());
+	GameInformation gameInfo = BuildInfoPackage();
+	if (!gameInfo.IsValid()) { return; }
+	CurrentMode->OnBallHit(gameInfo);
 }
 
 void FreePlayTraining::OnCollectBoost() {
 	if (!CurrentMode) { return; }
-	CurrentMode->OnBoostPickUp(BuildInfoPackage());
+	GameInformation gameInfo = BuildInfoPackage();
+	if (!gameInfo.IsValid()) { return; }
+	CurrentMode->OnBoostPickUp(gameInfo);
+}
+
+void FreePlayTraining::OnGoalScored() {
+	if (!CurrentMode) { return; }
+	GameInformation gameInfo = BuildInfoPackage();
+	if (!gameInfo.IsValid()) { return; }
+	CurrentMode->OnGoalScored(gameInfo);
 }
 
 // Util

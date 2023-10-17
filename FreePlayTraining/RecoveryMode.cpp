@@ -67,6 +67,10 @@ void RecoveryMode::OnBoostPickUp(GameInformation) {
 
 }
 
+void RecoveryMode::OnGoalScored(GameInformation) {
+
+}
+
 void RecoveryMode::RenderGame(CanvasWrapper) {
 
 }

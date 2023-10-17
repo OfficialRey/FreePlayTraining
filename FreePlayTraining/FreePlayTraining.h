@@ -35,6 +35,7 @@ public:
 	void Run();
 	void OnBallHit();
 	void OnCollectBoost();
+	void OnGoalScored();
 
 	ServerWrapper GetServerWrapper();
 	BallWrapper GetBall();

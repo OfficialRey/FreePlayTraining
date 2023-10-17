@@ -67,6 +67,10 @@ void PathingMode::OnBoostPickUp(GameInformation) {
 	TimeLeft += BOOST_PICKUP_TIME_INCREASE;
 }
 
+void PathingMode::OnGoalScored(GameInformation) {
+
+}
+
 void PathingMode::RenderGame(CanvasWrapper canvas) {
 	float fractional, whole;
 

@@ -38,6 +38,7 @@ public:
 
 	virtual void OnBallHit(GameInformation);
 	virtual void OnBoostPickUp(GameInformation);
+	virtual void OnGoalScored(GameInformation);
 
 	virtual void RenderGame(CanvasWrapper);
 };

@@ -10,7 +10,7 @@ void TrainingMode::ExecuteTimer(GameInformation gameInfo) {
 	car.SetRotation(DEFAULT_ROTATION);
 	car.SetAngularVelocity(Vector{}, false);
 
-	ball.SetLocation(Vector{ 0, 0, 100 });
+	ball.SetLocation(Vector{ 0, 0, CAR_HEIGHT });
 	ball.SetVelocity(Vector{});
 	ball.SetRotation(Rotator{});
 	ball.SetAngularVelocity(Vector{}, false);

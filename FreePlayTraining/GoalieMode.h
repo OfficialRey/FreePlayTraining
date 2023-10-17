@@ -1,19 +1,26 @@
 #pragma once
 
+#include "pch.h"
+
+#include "Utility.h"
 #include "TrainingMode.h"
 
-class RecoveryMode : public TrainingMode
+#define SHOT_FACTOR 0.5
+
+class GoalieMode : public TrainingMode
 {
-
 private:
-	Vector RecoveryPosition;
-	Vector RecoveryTarget;
 
-	void SetTargetPosition(GameInformation);
+	enum ShotType {
+		BACKPOST,
+		AERIAL_REVERSE
+	};
+
+	void StartMode(GameInformation);
 
 public:
 
-	RecoveryMode() = default;
+	GoalieMode() = default;
 
 	virtual void CheckGameOver();
 
@@ -27,3 +34,4 @@ public:
 
 	virtual void RenderGame(CanvasWrapper);
 };
+

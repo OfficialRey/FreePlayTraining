@@ -36,6 +36,7 @@ public:
 
 	virtual void OnBallHit(GameInformation) = 0;
 	virtual void OnBoostPickUp(GameInformation) = 0;
+	virtual void OnGoalScored(GameInformation) = 0;
 
 	void Render(CanvasWrapper);
 };
