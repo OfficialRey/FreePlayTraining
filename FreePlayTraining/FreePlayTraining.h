@@ -21,8 +21,8 @@ class FreePlayTraining : public BakkesMod::Plugin::BakkesModPlugin
 {
 
 private:
-	float OldTime;
-	float DeltaTime;
+	double OldTime;
+	double DeltaTime;
 	TrainingMode* CurrentMode;
 
 	void onLoad() override;

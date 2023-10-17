@@ -20,7 +20,7 @@ void RecoveryMode::SetTargetPosition(GameInformation gameInfo) {
 	RecoveryPosition = position;
 	RecoveryTarget = target;
 
-	float boost = (float)(distance / MIN_RECOVERY_DISTANCE * BOOST_MULTIPLIER);
+	float boost = (float)((distance + position.Z / (float) 2) / MIN_RECOVERY_DISTANCE * BOOST_MULTIPLIER);
 
 	Vector velocity = GetRandomCarSpeed();
 	velocity.Z = (float)(QUARTER_SPEED + (rand() % QUARTER_SPEED));
@@ -38,7 +38,7 @@ void RecoveryMode::SetTargetPosition(GameInformation gameInfo) {
 	ball.SetAngularVelocity(Vector{}, false);
 }
 
-void RecoveryMode::Run(GameInformation gameInfo) {
+void RecoveryMode::RunGame(GameInformation gameInfo) {
 	BallWrapper ball = gameInfo.Ball;
 	ball.SetLocation(RecoveryTarget);
 	ball.SetVelocity(Vector{});
@@ -46,7 +46,7 @@ void RecoveryMode::Run(GameInformation gameInfo) {
 
 }
 
-void RecoveryMode::OnEnable(GameInformation) {
+void RecoveryMode::EnableGame(GameInformation) {
 
 }
 
@@ -59,10 +59,10 @@ void RecoveryMode::OnBallHit(GameInformation gameInfo) {
 }
 
 
-void RecoveryMode::onBoostPickUp(GameInformation) {
+void RecoveryMode::OnBoostPickUp(GameInformation) {
 
 }
 
-void RecoveryMode::Render(CanvasWrapper) {
+void RecoveryMode::RenderGame(CanvasWrapper) {
 
 }

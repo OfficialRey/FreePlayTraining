@@ -30,6 +30,6 @@ Rotator GetRandomRotation() {
 	};
 }
 
-float GetTimeSeconds() {
-	return (float) (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()) / 1000;
+double GetTimeSeconds() {
+	return (double) (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()) / 1000.0;
 }

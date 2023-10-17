@@ -27,6 +27,8 @@
 
 #define BOOST_MULTIPLIER (2.0 / 7.0)
 
+#define COLOR_WHITE LinearColor{255, 255, 255, 255}
+
 float GetRandomFieldX();
 
 float GetRandomFieldY();
@@ -37,4 +39,4 @@ Vector GetRandomCarSpeed();
 
 Rotator GetRandomRotation();
 
-float GetTimeSeconds();
+double GetTimeSeconds();

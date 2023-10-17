@@ -39,18 +39,24 @@ void FreePlayTraining::onLoad()
 }
 
 void FreePlayTraining::ChangeCurrentMode(TrainingMode* mode) {
-	if (!CurrentMode) { 
+	// Free memory of old TrainingMode
+	if (CurrentMode) { 
+		CurrentMode->OnDisable(BuildInfoPackage());
 		gameWrapper->UnregisterDrawables();
-		delete CurrentMode; 
+		delete CurrentMode;
 	}
+
+	// Assign new TrainingMode
 	CurrentMode = mode;
+	if (!mode) { return; }
 	gameWrapper->RegisterDrawable([this](CanvasWrapper canvas) {
 		CurrentMode->Render(canvas);
 		});
+	CurrentMode->OnEnable(BuildInfoPackage());
 }
 
 void FreePlayTraining::CalculateDeltaTime() {
-	float currentTime = GetTimeSeconds();
+	double currentTime = GetTimeSeconds();
 	DeltaTime = currentTime - OldTime;
 	OldTime = currentTime;
 }
@@ -62,6 +68,11 @@ GameInformation FreePlayTraining::BuildInfoPackage() {
 // Loop
 
 void FreePlayTraining::Run() {
+	if (!IsInFreeplay()) { 
+		ChangeCurrentMode(NULL);
+		return; 
+	}
+	CalculateDeltaTime();
 	if (!CurrentMode) { return; }
 	CurrentMode->Run(BuildInfoPackage());
 }
@@ -75,7 +86,7 @@ void FreePlayTraining::OnBallHit() {
 
 void FreePlayTraining::OnCollectBoost() {
 	if (!CurrentMode) { return; }
-	CurrentMode->onBoostPickUp(BuildInfoPackage());
+	CurrentMode->OnBoostPickUp(BuildInfoPackage());
 }
 
 // Util
