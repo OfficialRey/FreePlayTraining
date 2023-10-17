@@ -38,6 +38,10 @@ void RecoveryMode::SetTargetPosition(GameInformation gameInfo) {
 	ball.SetAngularVelocity(Vector{}, false);
 }
 
+void RecoveryMode::CheckGameOver() {
+
+}
+
 void RecoveryMode::RunGame(GameInformation gameInfo) {
 	BallWrapper ball = gameInfo.Ball;
 	ball.SetLocation(RecoveryTarget);

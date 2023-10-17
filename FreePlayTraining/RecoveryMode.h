@@ -15,6 +15,8 @@ public:
 
 	RecoveryMode() = default;
 
+	virtual void CheckGameOver();
+
 	virtual void RunGame(GameInformation);
 	virtual void EnableGame(GameInformation);
 	virtual void OnDisable(GameInformation);

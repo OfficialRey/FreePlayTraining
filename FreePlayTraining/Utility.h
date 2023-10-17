@@ -28,6 +28,7 @@
 #define BOOST_MULTIPLIER (2.0 / 7.0)
 
 #define COLOR_WHITE LinearColor{255, 255, 255, 255}
+#define FONT_SIZE_SMALL 6
 
 float GetRandomFieldX();
 

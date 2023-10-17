@@ -9,6 +9,8 @@
 #define BOOST_DECAY_PER_SECOND 33
 #define BALL_HEIGHT_BOOST_GAIN_FACTOR (150 * 100)
 
+#define RECOVERY_BONUS 600
+
 class PathingMode : public TrainingMode
 {
 
@@ -27,6 +29,8 @@ private:
 public:
 
 	PathingMode() = default;
+
+	virtual void CheckGameOver();
 
 	virtual void RunGame(GameInformation);
 	virtual void EnableGame(GameInformation);

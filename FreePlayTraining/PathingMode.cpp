@@ -24,6 +24,11 @@ void PathingMode::SetBallPosition(GameInformation gameInfo) {
 	BallPosition = Vector{ GetRandomFieldX(), GetRandomFieldY(), GetRandomFieldZ() / (float) 1.5};
 }
 
+void PathingMode::CheckGameOver() {
+	if (TimeLeft > 0) { return; }
+	IsGameOver = true;
+}
+
 void PathingMode::RunGame(GameInformation gameInfo) {
 	// Remove ball from field
 	BallWrapper ball = gameInfo.Ball;
@@ -49,7 +54,11 @@ void PathingMode::OnDisable(GameInformation) {
 
 void PathingMode::OnBallHit(GameInformation gameInfo) {
 	TimeLeft += BALL_TOUCH_TIME_INCREASE;
-	BoostWrapper boost = gameInfo.Car.GetBoostComponent();
+	CarWrapper car = gameInfo.Car;
+	Vector velocity = car.GetVelocity();
+	velocity.Z -= RECOVERY_BONUS;
+	car.SetVelocity(velocity);
+	BoostWrapper boost = car.GetBoostComponent();
 	boost.SetBoostAmount(boost.GetCurrentBoostAmount() + gameInfo.Ball.GetLocation().Z / BALL_HEIGHT_BOOST_GAIN_FACTOR);
 	SetBallPosition(gameInfo);
 }
@@ -67,8 +76,8 @@ void PathingMode::RenderGame(CanvasWrapper canvas) {
 	std::string milliseconds = std::to_string(int(fractional * 100));
 	std::string result = seconds + ":" + milliseconds;
 
-	canvas.SetPosition(Vector2F{ (float)(canvas.GetSize().X / 2 - result.length() / 2), (float)(canvas.GetSize().Y * 0.2) });
+	canvas.SetPosition(Vector2F{ 0, 0 });
 	canvas.SetColor(Color);
 
-	canvas.DrawString(result, 2.0, 2.0, true);
+	canvas.DrawString(result, FONT_SIZE_SMALL, FONT_SIZE_SMALL, true);
 }
