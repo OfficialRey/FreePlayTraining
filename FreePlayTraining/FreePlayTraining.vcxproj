@@ -91,7 +91,9 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FreePlayCar.cpp" />
+    <ClCompile Include="FreePlayTrainingEvent.cpp" />
+    <ClCompile Include="FreePlayTrainingSettings.cpp" />
+    <ClCompile Include="FreePlayTrainingUtil.cpp" />
     <ClCompile Include="GoalieMode.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imguivariouscontrols.cpp" />
@@ -118,7 +120,6 @@
     <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FreePlayCar.h" />
     <ClInclude Include="GameInformation.h" />
     <ClInclude Include="GoalieMode.h" />
     <ClInclude Include="imgui\imconfig.h" />

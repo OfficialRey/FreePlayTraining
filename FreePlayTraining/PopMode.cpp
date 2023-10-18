@@ -1,18 +1,22 @@
 #include "pch.h"
 #include "PopMode.h"
 
+PopMode::PopMode() : TrainingMode(TIMER_GREEN, TIMER_YELLOW, false) {
+
+}
+
 
 void PopMode::DecayTime(GameInformation* gameInfo) {
 	BallWrapper ball = gameInfo->Ball;
 	if (ball.GetLocation().Z < MIN_BALL_HEIGHT) {
-		TimeLeft -= gameInfo->DeltaTime;
+		TimeRemaining -= gameInfo->DeltaTime;
 	}
 
 	CurrentTime += gameInfo->DeltaTime;
 }
 
 void PopMode::CheckGameOver() {
-	if (TimeLeft > 0) { return; }
+	if (TimeRemaining > 0) { return; }
 	IsGameOver = true;
 }
 
@@ -32,7 +36,7 @@ void PopMode::EnableGame(GameInformation* gameInfo) {
 	car.GetBoostComponent().SetCurrentBoostAmount(FULL_BOOST);
 
 	CurrentTime = 0;
-	TimeLeft = START_TIME;
+	TimeRemaining = START_TIME;
 }
 
 void PopMode::OnDisable(GameInformation*) {
@@ -55,11 +59,12 @@ void PopMode::OnDisable(GameInformation*) {
 
 }
 
+ void PopMode::OnTimeRunOut(GameInformation*) {
+	 IsGameOver = true;
+ }
+
  void PopMode::RenderGame(CanvasWrapper canvas) {
-	 std::string result = GetTimeString(TimeLeft);
-	 canvas.SetPosition(Vector2F{ CalculateCenterPosition(canvas, result, FONT_SIZE_MEDIUM), (float)(canvas.GetSize().Y * 0.2) });
-	 canvas.SetColor(GetColorBasedOnTime(TimeLeft, TIMER_YELLOW, TIMER_GREEN));
-	 canvas.DrawString(GetTimeString(TimeLeft), FONT_SIZE_MEDIUM, FONT_SIZE_MEDIUM, true);
+
 }
  void PopMode::RenderGameEnd(CanvasWrapper canvas) {
 	 std::string result = "Result: " + GetTimeString(CurrentTime);

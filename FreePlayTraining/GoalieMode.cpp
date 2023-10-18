@@ -1,4 +1,5 @@
 #include "pch.h"
+
 #include "GoalieMode.h"
 
 void GoalieMode::StartMode(GameInformation* gameInfo) {
@@ -19,17 +20,14 @@ void GoalieMode::StartMode(GameInformation* gameInfo) {
 
 	car.SetLocation(carPosition);
 	car.SetVelocity(carVelocity);
+	car.SetRotation(VectorToRotator(carVelocity));
 
 	ball.SetLocation(ballPosition);
 	ball.SetVelocity(ballToGoal);
 	ball.SetAngularVelocity(GetRandomCarSpeed(), false);
 }
 
-void GoalieMode::CheckGameOver() {
-
-}
-
-void GoalieMode::RunGame(GameInformation* gameInfo) {
+void GoalieMode::RunGame(GameInformation*) {
 
 }
 
@@ -46,7 +44,7 @@ void GoalieMode::OnBallHit(GameInformation* gameInfo) {
 	StartMode(gameInfo);
 }
 
-void GoalieMode::OnGoalScored(GameInformation* gameInfo) {
+void GoalieMode::OnGoalScored(GameInformation*) {
 
 }
 
@@ -58,14 +56,18 @@ void GoalieMode::OnReplayEnd(GameInformation* gameInfo) {
 	StartMode(gameInfo);
 }
 
+void GoalieMode::OnTimeRunOut(GameInformation*) {
+
+}
+
 void GoalieMode::OnBoostPickUp(GameInformation*) {
 
 }
 
-void GoalieMode::RenderGame(CanvasWrapper canvas) {
+void GoalieMode::RenderGame(CanvasWrapper) {
 
 }
 
-void GoalieMode::RenderGameEnd(CanvasWrapper canvas) {
+void GoalieMode::RenderGameEnd(CanvasWrapper) {
 
 }

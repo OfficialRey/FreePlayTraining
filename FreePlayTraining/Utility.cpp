@@ -2,6 +2,8 @@
 
 #include "Utility.h"
 
+#include <math.h>
+
 float GetRandomFieldX() {
 	return 2 * (float)(rand() % NO_CORNER_SIDE_WALL) - NO_CORNER_SIDE_WALL;
 }
@@ -59,4 +61,21 @@ LinearColor GetColorBasedOnTime(float time, int yellow, int green) {
 	if (time > green) { color = COLOR_GREEN; }
 	else if (time > yellow) { color = COLOR_YELLOW; }
 	return color;
+}
+
+void RenderScore(CanvasWrapper canvas, double currentScore, double possibleScore) {
+	int percentage = (currentScore / possibleScore) * 100.0;
+
+	std::string result = "Score: " + std::to_string((int)currentScore) + " / " + std::to_string((int)possibleScore) + " (" + std::to_string(percentage) + "%)";
+	canvas.SetPosition(Vector2F{ CalculateCenterPosition(canvas, result, FONT_SIZE_SMALL), (float)(canvas.GetSize().Y * 0.05) });
+	canvas.SetColor(COLOR_WHITE);
+	canvas.DrawString(result, FONT_SIZE_SMALL, FONT_SIZE_SMALL, true);
+}
+
+void RenderTime(CanvasWrapper canvas, double time, int yellow, int green) {
+	std::string result = GetTimeString(time);
+
+	canvas.SetPosition(Vector2F{ CalculateCenterPosition(canvas, result, FONT_SIZE_MEDIUM), (float)(canvas.GetSize().Y * 0.2) });
+	canvas.SetColor(GetColorBasedOnTime(time, yellow, green));
+	canvas.DrawString(result, FONT_SIZE_MEDIUM, FONT_SIZE_MEDIUM, true);
 }

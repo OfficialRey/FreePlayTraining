@@ -12,7 +12,6 @@ public:
 
 	CarWrapper Car = 0;
 	BallWrapper Ball = 0;
-	std::shared_ptr<CVarManagerWrapper> CVarManager;
 
 	double DeltaTime;
 
@@ -26,6 +25,10 @@ public:
 		Ball = ball;
 
 		CalculateDeltaTime();
+	}
+
+	bool IsValid() {
+		return Car && Ball && DeltaTime >= 0;
 	}
 
 private:

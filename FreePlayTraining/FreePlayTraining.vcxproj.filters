@@ -96,11 +96,17 @@
     <ClCompile Include="GoalieMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FreePlayCar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PopMode.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FreePlayTrainingEvent.cpp">
+      <Filter>Plugin\src</Filter>
+    </ClCompile>
+    <ClCompile Include="FreePlayTrainingUtil.cpp">
+      <Filter>Plugin\src</Filter>
+    </ClCompile>
+    <ClCompile Include="FreePlayTrainingSettings.cpp">
+      <Filter>Plugin\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -177,9 +183,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GoalieMode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FreePlayCar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PopMode.h">

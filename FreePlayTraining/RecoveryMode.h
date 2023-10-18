@@ -12,22 +12,17 @@ class RecoveryMode : public TrainingMode
 
 private:
 
-	double RecoveryTime;
-	double RecoveriesSucceeded;
-	double RecoveriesGeneral;
-
 	Vector RecoveryPosition;
 	Vector RecoveryTarget;
 
 	void SetTargetPosition(GameInformation*);
-	void TickClock(GameInformation*);
 
 	void LoseRound(GameInformation*);
 	void WinRound(GameInformation*);
 
 public:
 
-	RecoveryMode() = default;
+	RecoveryMode();
 
 	virtual void CheckGameOver();
 
@@ -40,6 +35,7 @@ public:
 	virtual void OnGoalScored(GameInformation*);
 	virtual void OnReplayBegin(GameInformation*);
 	virtual void OnReplayEnd(GameInformation*);
+	virtual void OnTimeRunOut(GameInformation*);
 
 	virtual void RenderGame(CanvasWrapper);
 	virtual void RenderGameEnd(CanvasWrapper);

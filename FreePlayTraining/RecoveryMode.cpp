@@ -2,6 +2,10 @@
 #include "Utility.h"
 #include "RecoveryMode.h"
 
+RecoveryMode::RecoveryMode() : TrainingMode(TIMER_GREEN, TIMER_YELLOW, true) {
+
+}
+
 void RecoveryMode::SetTargetPosition(GameInformation* gameInfo) {
 	CarWrapper car = gameInfo->Car;
 	BallWrapper ball = gameInfo->Ball;
@@ -46,25 +50,17 @@ void RecoveryMode::SetTargetPosition(GameInformation* gameInfo) {
 	Vector playerDirection = velocity.getNormalized();
 	float angle = Vector::dot(playerToBall, playerDirection);
 
-	RecoveryTime = BASE_RECOVERY_TIME + ((distance + RecoveryPosition.Z + RecoveryTarget.Z+ velocity.magnitude()) - (1.5 * angle * distance)) / MAX_SPEED;
-}
-
-void RecoveryMode::TickClock(GameInformation* gameInfo) {
-	RecoveryTime -= gameInfo->DeltaTime;
-
-	if (RecoveryTime > 0) { return; }
-
-	LoseRound(gameInfo);
+	TimeRemaining = BASE_RECOVERY_TIME + ((distance + RecoveryPosition.Z + RecoveryTarget.Z+ velocity.magnitude()) - (1.5 * angle * distance)) / MAX_SPEED;
 }
 
 void RecoveryMode::LoseRound(GameInformation* gameInfo) {
-	RecoveriesGeneral += 1;
+	PossibleScore += 1;
 	SetTargetPosition(gameInfo);
 }
 
 void RecoveryMode::WinRound(GameInformation* gameInfo) {
-	RecoveriesSucceeded += 1;
-	RecoveriesGeneral += 1;
+	CurrentScore += 1;
+	PossibleScore += 1;
 	SetTargetPosition(gameInfo);
 }
 
@@ -77,13 +73,10 @@ void RecoveryMode::RunGame(GameInformation* gameInfo) {
 	ball.SetLocation(RecoveryTarget);
 	ball.SetVelocity(Vector{});
 	ball.SetAngularVelocity(Vector{}, false);
-
-	TickClock(gameInfo);
-
 }
 
 void RecoveryMode::EnableGame(GameInformation*) {
-	RecoveryTime = BASE_RECOVERY_TIME;
+	TimeRemaining = BASE_RECOVERY_TIME;
 }
 
 void RecoveryMode::OnDisable(GameInformation*) {
@@ -111,20 +104,12 @@ void RecoveryMode::OnReplayEnd(GameInformation*) {
 
 }
 
+void RecoveryMode::OnTimeRunOut(GameInformation* gameInfo) {
+	LoseRound(gameInfo);
+}
+
 void RecoveryMode::RenderGame(CanvasWrapper canvas) {
-	std::string result = GetTimeString(RecoveryTime);
 
-	canvas.SetPosition(Vector2F{ CalculateCenterPosition(canvas, result, FONT_SIZE_MEDIUM), (float)(canvas.GetSize().Y * 0.2) });
-	canvas.SetColor(GetColorBasedOnTime(RecoveryTime, TIMER_YELLOW, TIMER_GREEN));
-	canvas.DrawString(GetTimeString(RecoveryTime), FONT_SIZE_MEDIUM, FONT_SIZE_MEDIUM, true);
-
-
-	int percentage = (RecoveriesSucceeded / RecoveriesGeneral) * 100.0;
-
-	result = "Score: " + std::to_string((int) RecoveriesSucceeded) + " / " + std::to_string((int) RecoveriesGeneral) + " (" + std::to_string(percentage) + "%)";
-	canvas.SetPosition(Vector2F{ CalculateCenterPosition(canvas, result, FONT_SIZE_SMALL), (float)(canvas.GetSize().Y * 0.05) });
-	canvas.SetColor(COLOR_WHITE);
-	canvas.DrawString(result, FONT_SIZE_SMALL, FONT_SIZE_SMALL, true);
 }
 
 void RecoveryMode::RenderGameEnd(CanvasWrapper canvas) {

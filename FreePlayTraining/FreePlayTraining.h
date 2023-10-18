@@ -12,22 +12,39 @@
 
 #include "TrainingMode.h"
 
+#define RECOVERY_COMMAND "load_recovery"
+#define PATHING_COMMAND "load_boost_pathing"
+#define POP_COMMAND "load_ball_pop"
+#define GOALIE_COMMAND "load_ball_save"
+
 constexpr auto plugin_version = stringify(VERSION_MAJOR) "." stringify(VERSION_MINOR) "." stringify(VERSION_PATCH) "." stringify(VERSION_BUILD);
 
 
-class FreePlayTraining : public BakkesMod::Plugin::BakkesModPlugin
+class FreePlayTraining : public BakkesMod::Plugin::BakkesModPlugin, public BakkesMod::Plugin::PluginSettingsWindow
 {
 
 private:
 	GameInformation* GameInfo;
 	TrainingMode* CurrentMode;
 
-	void onLoad() override;
+
 	void ChangeCurrentMode(TrainingMode*);
+	void CheckCurrentMode();
+	void ResetMode();
 
 	void UpdateInfoPackage();
 
 public:
+
+	void onLoad() override;
+
+	// GUI
+
+	void RenderSettings() override;
+	void RenderModeSelection();
+
+	virtual std::string GetPluginName();
+	virtual void SetImGuiContext(uintptr_t);
 
 	~FreePlayTraining();
 
@@ -37,6 +54,8 @@ public:
 	void OnGoalScored();
 	void OnReplayStart();
 	void OnReplayEnd();
+	void OnResetTraining();
+	void OnQuitMatch();
 
 	ServerWrapper GetServerWrapper();
 	BallWrapper GetBall();

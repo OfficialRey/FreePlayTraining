@@ -23,41 +23,47 @@ void FreePlayTraining::onLoad()
 	GameInfo = new GameInformation{ GetLocalCar(), GetBall()};
 
 	// Register game loop
-	gameWrapper->HookEvent("Function Engine.Interaction.Tick", [this](std::string eventName) {
+	gameWrapper->HookEvent(HOOK_ENGINE_TICK, [this](std::string eventName) {
 		Run();
 		});
 
 	// Register game events
-	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnCarTouch", [this](std::string eventName) {
+	gameWrapper->HookEvent(HOOK_BALL_HIT, [this](std::string eventName) {
 		OnBallHit();
 		});	
-	gameWrapper->HookEvent("Function TAGame.VehiclePickup_Boost_TA.Pickup", [this](std::string eventName) {
+	gameWrapper->HookEvent(HOOK_PICKUP_BOOST, [this](std::string eventName) {
 		OnCollectBoost();
 		});
-	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this](std::string eventName) {
+	gameWrapper->HookEvent(HOOK_GOAL_SCORED, [this](std::string eventName) {
 		OnGoalScored();
 		});
-	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", [this](std::string eventName) {
+	gameWrapper->HookEvent(HOOK_GOAL_REPLAY_BEGIN, [this](std::string eventName) {
 		OnReplayStart();
 		});
-	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", [this](std::string eventName) {
+	gameWrapper->HookEvent(HOOK_GOAL_REPLAY_END, [this](std::string eventName) {
 		OnReplayEnd();
+		});
+	gameWrapper->HookEvent(HOOK_PLAYER_FREEPLAY_RESET, [this](std::string eventName) {
+		OnResetTraining();
+		});
+	gameWrapper->HookEvent(HOOK_MATCH_QUIT, [this](std::string eventName) {
+		OnQuitMatch();
 		});
 
 	// Register commands
-	cvarManager->registerNotifier("Recovery", [this](std::vector<std::string> args) {
+	cvarManager->registerNotifier(RECOVERY_COMMAND, [this](std::vector<std::string> args) {
 		ChangeCurrentMode(new RecoveryMode{});
 		}, "", PERMISSION_ALL);	
 	
-	cvarManager->registerNotifier("Pathing", [this](std::vector<std::string> args) {
+	cvarManager->registerNotifier(PATHING_COMMAND, [this](std::vector<std::string> args) {
 		ChangeCurrentMode(new PathingMode{});
 		}, "", PERMISSION_ALL);
 
-	cvarManager->registerNotifier("Goalie", [this](std::vector<std::string> args) {
+	cvarManager->registerNotifier(GOALIE_COMMAND, [this](std::vector<std::string> args) {
 		ChangeCurrentMode(new GoalieMode{});
 		}, "", PERMISSION_ALL);
 
-	cvarManager->registerNotifier("Pop", [this](std::vector<std::string> args) {
+	cvarManager->registerNotifier(POP_COMMAND, [this](std::vector<std::string> args) {
 		ChangeCurrentMode(new PopMode{});
 		}, "", PERMISSION_ALL);
 }
@@ -79,6 +85,18 @@ void FreePlayTraining::ChangeCurrentMode(TrainingMode* mode) {
 	CurrentMode->OnEnable(GameInfo);
 }
 
+void FreePlayTraining::CheckCurrentMode() {
+	if (!CurrentMode) { return; }
+	if (GameInfo->IsValid() && CurrentMode->IsActive() && IsInFreeplay()) { return; }
+	ResetMode();
+}
+
+void FreePlayTraining::ResetMode() {
+	ChangeCurrentMode(nullptr);
+
+	cvarManager->executeCommand("boost set unlimited");
+}
+
 void FreePlayTraining::UpdateInfoPackage() {
 	GameInfo->Update(GetLocalCar(), GetBall());
 }
@@ -86,60 +104,8 @@ void FreePlayTraining::UpdateInfoPackage() {
 // Loop
 
 void FreePlayTraining::Run() {
+	CheckCurrentMode();
 	UpdateInfoPackage();
-	if (!IsInFreeplay()) { 
-		ChangeCurrentMode(NULL);
-		return; 
-	}
 	if (!CurrentMode) { return; }
 	CurrentMode->Run(GameInfo);
-}
-
-// Events
-
-void FreePlayTraining::OnBallHit() {
-	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
-	CurrentMode->OnBallHit(GameInfo);
-}
-
-void FreePlayTraining::OnCollectBoost() {
-	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
-	CurrentMode->OnBoostPickUp(GameInfo);
-}
-
-void FreePlayTraining::OnGoalScored() {
-	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
-	CurrentMode->OnGoalScored(GameInfo);
-}
-
-void FreePlayTraining::OnReplayStart() {
-	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
-	CurrentMode->OnReplayBegin(GameInfo);
-}
-
-void FreePlayTraining::OnReplayEnd() {
-	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
-	CurrentMode->OnReplayEnd(GameInfo);
-}
-
-// Util
-
-ServerWrapper FreePlayTraining::GetServerWrapper() {
-	return gameWrapper->GetCurrentGameState();
-}
-BallWrapper FreePlayTraining::GetBall() {
-	ServerWrapper wrapper = GetServerWrapper();
-	if (!wrapper) { return NULL; }
-	return wrapper.GetBall();
-}
-CarWrapper FreePlayTraining::GetLocalCar() {
-	return gameWrapper->GetLocalCar();
-}
-
-CameraWrapper FreePlayTraining::GetCamera() {
-	return gameWrapper->GetCamera();
-}
-
-bool FreePlayTraining::IsInFreeplay() {
-	return gameWrapper->IsInFreeplay();
 }

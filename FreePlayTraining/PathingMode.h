@@ -23,9 +23,6 @@ private:
 
 	Vector BallPosition{0, 0 , 100};
 
-	double TimeLeft = STARTING_TIME;
-	double CurrentTime = 0;
-
 	void StartMode(GameInformation*);
 	void DecayBoost(GameInformation*);
 	void SetBallPosition(GameInformation*);
@@ -33,9 +30,7 @@ private:
 
 public:
 
-	PathingMode() = default;
-
-	virtual void CheckGameOver();
+	PathingMode();
 
 	virtual void RunGame(GameInformation*);
 	virtual void EnableGame(GameInformation*);
@@ -46,6 +41,7 @@ public:
 	virtual void OnGoalScored(GameInformation*);
 	virtual void OnReplayBegin(GameInformation*);
 	virtual void OnReplayEnd(GameInformation*);
+	virtual void OnTimeRunOut(GameInformation*);
 
 	virtual void RenderGame(CanvasWrapper);
 	virtual void RenderGameEnd(CanvasWrapper);

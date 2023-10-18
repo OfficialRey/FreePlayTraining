@@ -2,11 +2,15 @@
 #include "Utility.h"
 #include "PathingMode.h"
 
+PathingMode::PathingMode() : TrainingMode(TIMER_GREEN, TIMER_YELLOW, true) {
+
+}
+
 void PathingMode::StartMode(GameInformation* gameInfo) {
 	CarWrapper car = gameInfo->Car;
 	BallWrapper ball = gameInfo->Ball;
 
-	TimeLeft = STARTING_TIME;
+	TimeRemaining = STARTING_TIME;
 	CurrentTime = 0;
 }
 
@@ -31,21 +35,12 @@ void PathingMode::LimitBoost(GameInformation* gameInfo) {
 	}
 }
 
-void PathingMode::CheckGameOver() {
-	if (TimeLeft > 0) { return; }
-	IsGameOver = true;
-}
-
 void PathingMode::RunGame(GameInformation* gameInfo) {
 	// Remove ball from field
 	BallWrapper ball = gameInfo->Ball;
 	ball.SetLocation(BallPosition);
 	ball.SetVelocity(Vector{});
 	ball.SetAngularVelocity(Vector{}, false);
-
-	// Tick clock
-	TimeLeft -= gameInfo->DeltaTime;
-	CurrentTime += gameInfo->DeltaTime;
 
 	// Decay boost
 	DecayBoost(gameInfo);
@@ -65,7 +60,7 @@ void PathingMode::OnDisable(GameInformation*) {
 void PathingMode::OnBallHit(GameInformation* gameInfo) {
 	BallWrapper ball = gameInfo->Ball;
 	double increase = (ball.GetLocation().Z / MAX_SPEED);
-	TimeLeft += BALL_TOUCH_TIME_INCREASE + increase;
+	TimeRemaining += BALL_TOUCH_TIME_INCREASE + increase;
 	CarWrapper car = gameInfo->Car;
 	Vector velocity = car.GetVelocity();
 	velocity.Z -= RECOVERY_BONUS;
@@ -76,7 +71,7 @@ void PathingMode::OnBallHit(GameInformation* gameInfo) {
 }
 
 void PathingMode::OnBoostPickUp(GameInformation* gameInfo) {
-	TimeLeft += BOOST_PICKUP_TIME_INCREASE;
+	TimeRemaining += BOOST_PICKUP_TIME_INCREASE;
 }
 
 void PathingMode::OnGoalScored(GameInformation*) {
@@ -91,11 +86,12 @@ void PathingMode::OnReplayEnd(GameInformation*) {
 
 }
 
+void PathingMode::OnTimeRunOut(GameInformation*) {
+	IsGameOver = true;
+}
+
 void PathingMode::RenderGame(CanvasWrapper canvas) {
-	std::string result = GetTimeString(TimeLeft);
-	canvas.SetPosition(Vector2F{ CalculateCenterPosition(canvas, result, FONT_SIZE_MEDIUM), (float) (canvas.GetSize().Y * 0.2)});
-	canvas.SetColor(GetColorBasedOnTime(TimeLeft, TIMER_YELLOW, TIMER_GREEN));
-	canvas.DrawString(GetTimeString(TimeLeft), FONT_SIZE_MEDIUM, FONT_SIZE_MEDIUM, true);
+
 }
 
 void PathingMode::RenderGameEnd(CanvasWrapper canvas) {

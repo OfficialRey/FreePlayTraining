@@ -22,8 +22,6 @@ public:
 
 	GoalieMode() = default;
 
-	virtual void CheckGameOver();
-
 	virtual void RunGame(GameInformation*);
 	virtual void EnableGame(GameInformation*);
 	virtual void OnDisable(GameInformation*);
@@ -33,6 +31,7 @@ public:
 	virtual void OnGoalScored(GameInformation*);
 	virtual void OnReplayBegin(GameInformation*);
 	virtual void OnReplayEnd(GameInformation*);
+	virtual void OnTimeRunOut(GameInformation*);
 
 	virtual void RenderGame(CanvasWrapper);
 	virtual void RenderGameEnd(CanvasWrapper)	;

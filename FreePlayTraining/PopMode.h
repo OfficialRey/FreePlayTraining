@@ -20,14 +20,11 @@ class PopMode : public TrainingMode
 
 private:
 
-	double TimeLeft = START_TIME;
-	double CurrentTime = 0;
-
 	void DecayTime(GameInformation*);
 
 public:
 
-	PopMode() = default;
+	PopMode();
 
 	virtual void CheckGameOver();
 
@@ -40,6 +37,7 @@ public:
 	virtual void OnGoalScored(GameInformation*);
 	virtual void OnReplayBegin(GameInformation*);
 	virtual void OnReplayEnd(GameInformation*);
+	virtual void OnTimeRunOut(GameInformation*);
 
 	virtual void RenderGame(CanvasWrapper);
 	virtual void RenderGameEnd(CanvasWrapper);

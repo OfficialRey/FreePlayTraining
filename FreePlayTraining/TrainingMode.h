@@ -15,23 +15,48 @@ class TrainingMode
 {
 private:
 
-	double EndTime = 0;
-	double TimeRemaining = 0;
-	bool Running = false;
+	bool AutoReduceTime = false;
+
+	double PreGameTimer = 0;
+	double EndGameTimer = 0;
+
+	double YellowTime = 0;
+	double GreenTime = 0;
+
+	void ExecutePreGameTimer(GameInformation* gameInfo);
+	void ExecutePostGameTimer(GameInformation* gameInfo);
+	void ExecuteGameLoop(GameInformation* gameInfo);
 
 	void ExecuteTimer(GameInformation* gameInfo);
-	void RenderTimer(CanvasWrapper canvas);
+	void OnGameEnable(GameInformation* gameInfo);
+
+	void RenderPreGameTimer(CanvasWrapper canvas);
+	
 
 protected:
+
+	double TimeRemaining = 0;
+	double CurrentTime = 0;
+
+	double CurrentScore = 0;
+	double PossibleScore = 0;
+
+	void Reset();
+	void EndGame();
 
 	virtual void RunGame(GameInformation*) = 0;
 	virtual void EnableGame(GameInformation*) = 0;
 	virtual void RenderGame(CanvasWrapper) = 0;
-	virtual void CheckGameOver() = 0;
 
 public:
 
-	bool IsGameOver;
+	TrainingMode();
+	TrainingMode(double, double, bool);
+
+	bool IsGameOver = false;
+	bool Running = false;
+
+	bool IsActive();
 
 	void Run(GameInformation*);
 
@@ -43,6 +68,7 @@ public:
 	virtual void OnGoalScored(GameInformation*) = 0;
 	virtual void OnReplayBegin(GameInformation*) = 0;
 	virtual void OnReplayEnd(GameInformation*) = 0;
+	virtual void OnTimeRunOut(GameInformation*) = 0;
 
 	void Render(CanvasWrapper);
 	virtual void RenderGameEnd(CanvasWrapper) = 0;

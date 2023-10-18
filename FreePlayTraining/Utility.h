@@ -60,6 +60,17 @@
 #define FONT_SIZE_SMALL 4
 #define FONT_SIZE_MEDIUM 6
 
+// Event Hooks
+
+#define HOOK_ENGINE_TICK "Function Engine.Interaction.Tick"
+#define HOOK_BALL_HIT "Function TAGame.Ball_TA.OnCarTouch"
+#define HOOK_PICKUP_BOOST "Function TAGame.VehiclePickup_Boost_TA.Pickup"
+#define HOOK_GOAL_SCORED "Function TAGame.Ball_TA.OnHitGoal"
+#define HOOK_GOAL_REPLAY_BEGIN "Function GameEvent_Soccar_TA.ReplayPlayback.BeginState"
+#define HOOK_GOAL_REPLAY_END "Function GameEvent_Soccar_TA.ReplayPlayback.EndState"
+#define HOOK_PLAYER_FREEPLAY_RESET "Function TAGame.GameInfo_TA.PlayerResetTraining"
+#define HOOK_MATCH_QUIT "Function TAGame.GameEvent_Soccar_TA.Destroyed"
+
 float GetRandomFieldX();
 
 float GetRandomFieldY();
@@ -74,8 +85,12 @@ double GetTimeSeconds();
 
 double GetTimeMilliSeconds();
 
-std::string GetTimeString(double seconds);
+std::string GetTimeString(double);
 
 float CalculateCenterPosition(CanvasWrapper, std::string, float);
 
-LinearColor GetColorBasedOnTime(float time, int yellow, int green);
+LinearColor GetColorBasedOnTime(float, int, int);
+
+void RenderScore(CanvasWrapper, double, double);
+
+void RenderTime(CanvasWrapper , double, int, int);
