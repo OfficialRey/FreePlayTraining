@@ -53,6 +53,12 @@ void FreePlayTraining::ResetVariables() {
 		cvarManager->getCvar(PATHING_BOOST_DECAY_TITLE).ResetToDefault();
 		break;
 	case FreePlayTraining::POP:
+		// Reset Pop Parameters
+		cvarManager->getCvar(POP_BASE_TIME_TITLE).ResetToDefault();
+		cvarManager->getCvar(POP_BALL_HEIGHT_TITLE).ResetToDefault();
+		cvarManager->getCvar(POP_GRAVITY_TITLE).ResetToDefault();
+		cvarManager->getCvar(POP_BOOST_MAX_TITLE).ResetToDefault();
+		cvarManager->getCvar(POP_BOOST_DECAY_TITLE).ResetToDefault();
 		break;
 	case FreePlayTraining::GOALIE:
 		break;

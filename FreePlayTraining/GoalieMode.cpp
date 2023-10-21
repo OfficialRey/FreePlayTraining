@@ -29,6 +29,7 @@ void GoalieMode::StartMode(GameInformation* gameInfo) {
 	ball.SetAngularVelocity(GetRandomCarSpeed(), false);
 
 	StallGame(gameInfo, STALL_TIME);
+	_globalCvarManager->log("Created shot!");
 }
 
 void GoalieMode::RunGame(GameInformation*) {

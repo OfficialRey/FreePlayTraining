@@ -105,6 +105,7 @@ void TrainingMode::LimitBoost(GameInformation* gameInfo) {
 }
 
 void TrainingMode::DecayBoost(GameInformation* gameInfo) {
+	if (IsStalled() || !IsInGame()) { return; }
 	CarWrapper car = gameInfo->Car;
 	BoostWrapper boost = car.GetBoostComponent();
 
@@ -116,6 +117,7 @@ void TrainingMode::DecayBoost(GameInformation* gameInfo) {
 
 void TrainingMode::DisableGoals(GameInformation* gameInfo) {
 	if (!DisableGoal) { return; }
+	// TODO: Make ball bounce off imaginary wall when about to enter the goal
 }
 
 void TrainingMode::Reset() {
@@ -166,9 +168,9 @@ void TrainingMode::Run(GameInformation* gameInfo) {
 	ExecutePreGameTimer(gameInfo);
 
 	// Mid Game
+	ExecuteGameStall(gameInfo);
 	LimitBoost(gameInfo);
 	DecayBoost(gameInfo);
-	ExecuteGameStall(gameInfo);
 	ExecuteTimer(gameInfo);
 	ExecuteGameLoop(gameInfo);
 
