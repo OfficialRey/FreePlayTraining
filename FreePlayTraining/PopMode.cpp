@@ -1,18 +1,32 @@
 #include "pch.h"
 #include "PopMode.h"
 
-PopMode::PopMode() : TrainingMode(POP_TIMER_GREEN, POP_TIMER_YELLOW, false) {
+PopMode::PopMode() : PopBaseTime(_globalCvarManager->getCvar(POP_BASE_TIME_TITLE).getFloatValue()),
+	PopMinBallHeight(_globalCvarManager->getCvar(POP_BALL_HEIGHT_TITLE).getIntValue()),
+	PopGravity(_globalCvarManager->getCvar(POP_GRAVITY_TITLE).getFloatValue()),
+	TrainingMode(
+		POP_TIMER_GREEN,
+		POP_TIMER_YELLOW,
+		false,
+		_globalCvarManager->getCvar(POP_BOOST_MAX_TITLE).getIntValue(),
+		_globalCvarManager->getCvar(POP_BOOST_DECAY_TITLE).getIntValue()
+	) {
 
 }
 
+void PopMode::EnhanceGravity(GameInformation* gameInfo) {
+	if (PopGravity == POP_DEFAULT_GRAVITY) { return; }
+	BallWrapper ball = gameInfo->Ball;
+	Vector velocity = ball.GetVelocity();
+	velocity.Z -= (DEFAULT_GRAVITY * (PopGravity - POP_DEFAULT_GRAVITY)) * gameInfo->DeltaTime;
+	ball.SetVelocity(velocity);
+}
 
 void PopMode::DecayTime(GameInformation* gameInfo) {
-	BallWrapper ball = gameInfo->Ball;
-	if (ball.GetLocation().Z < MIN_BALL_HEIGHT) {
-		TimeRemaining -= gameInfo->DeltaTime;
-	}
-
 	CurrentTime += gameInfo->DeltaTime;
+	BallWrapper ball = gameInfo->Ball;
+	if (ball.GetLocation().Z > PopMinBallHeight) { return; }
+	TimeRemaining -= gameInfo->DeltaTime;
 }
 
 void PopMode::CheckGameOver() {
@@ -22,6 +36,7 @@ void PopMode::CheckGameOver() {
 
 void PopMode::RunGame(GameInformation* gameInfo) {
 	DecayTime(gameInfo);
+	EnhanceGravity(gameInfo);
 }
 
 void PopMode::EnableGame(GameInformation* gameInfo) {
@@ -36,7 +51,7 @@ void PopMode::EnableGame(GameInformation* gameInfo) {
 	car.GetBoostComponent().SetCurrentBoostAmount(FULL_BOOST);
 
 	CurrentTime = 0;
-	TimeRemaining = POP_START_TIME;
+	TimeRemaining = PopBaseTime;
 }
 
 void PopMode::OnDisable(GameInformation*) {

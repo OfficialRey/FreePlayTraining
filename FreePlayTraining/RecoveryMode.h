@@ -19,6 +19,16 @@
 #define RECOVERY_BASE_TIME_USER_TITLE "Base Time"
 #define RECOVERY_BASE_TIME_USER_TOOLTIP "Change Base Time"
 
+// Max Boost
+
+#define RECOVERY_BOOST_MIN_MAX 50
+#define RECOVERY_BOOST_DEFAULT_MAX 100
+#define RECOVERY_BOOST_MAX_MAX 100
+
+#define RECOVERY_BOOST_MAX_TITLE "RECOVERY_BOOST_MAX"
+#define RECOVERY_BOOST_MAX_USER_TITLE "Max Boost"
+#define RECOVERY_BOOST_MAX_USER_TOOLTIP "Change Max Boost"
+
 // Boost Factor
 
 #define RECOVERY_BOOST_MIN_FACTOR 0.75f
@@ -28,6 +38,16 @@
 #define RECOVERY_BOOST_FACTOR_TITLE "RECOVERY_BOOST_FACTOR"
 #define RECOVERY_BOOST_FACTOR_USER_TITLE "Boost Factor"
 #define RECOVERY_BOOST_FACTOR_USER_TOOLTIP "Change Boost Factor"
+
+// Boost Decay
+
+#define RECOVERY_BOOST_MIN_DECAY 0.0f
+#define RECOVERY_BOOST_DEFAULT_DECAY 0.0f
+#define RECOVERY_BOOST_MAX_DECAY 3.0f
+
+#define RECOVERY_BOOST_DECAY_TITLE "RECOVERY_BOOST_DECAY"
+#define RECOVERY_BOOST_DECAY_USER_TITLE "Boost Decay"
+#define RECOVERY_BOOST_DECAY_USER_TOOLTIP "Change Boost Decay"
 
 // Time Factor
 
@@ -44,9 +64,9 @@ class RecoveryMode : public TrainingMode
 
 private:
 
-	float BaseTime;
-	float BoostFactor;
-	float TimeFactor;
+	float RecoveryBaseTime;
+	float RecoveryBoostFactor;
+	float RecoveryTimeFactor;
 
 	Vector RecoveryPosition;
 	Vector RecoveryTarget;

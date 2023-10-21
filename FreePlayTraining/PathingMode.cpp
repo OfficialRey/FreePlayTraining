@@ -2,29 +2,23 @@
 #include "Utility.h"
 #include "PathingMode.h"
 
-PathingMode::PathingMode() : TrainingMode(PATHING_TIMER_GREEN, PATHING_TIMER_YELLOW, true) {
+PathingMode::PathingMode() : PathingBaseTime(_globalCvarManager->getCvar(PATHING_BASE_TIME_TITLE).getFloatValue()),
+	PathingBoostCollectionTime(_globalCvarManager->getCvar(PATHING_BOOST_COLLECTION_TITLE).getFloatValue()),
+	PathingBallTouchTime(_globalCvarManager->getCvar(PATHING_BALL_TOUCH_TITLE).getFloatValue()),
+	PathingBallHeightBoostBonus((double) _globalCvarManager->getCvar(PATHING_BALL_BONUS_TITLE).getIntValue() * BALL_HEIGHT_NORMALIZER),
+	PathingRecoveryBonus(_globalCvarManager->getCvar(PATHING_RECOVERY_TITLE).getIntValue()),
+	TrainingMode(
+		PATHING_TIMER_GREEN,
+		PATHING_TIMER_YELLOW,
+		true,
+		_globalCvarManager->getCvar(PATHING_BOOST_MAX_TITLE).getIntValue(),
+		_globalCvarManager->getCvar(PATHING_BOOST_DECAY_TITLE).getIntValue()
+	) {
 
-}
-
-void PathingMode::DecayBoost(GameInformation* gameInfo) {
-	CarWrapper car = gameInfo->Car;
-	BoostWrapper boost = car.GetBoostComponent();
-
-	double consumption = ((double) CUSTOM_BOOST_DECAY_PER_SECOND + (car.GetInput().HoldingBoost / 2) * DEFAULT_BOOST_DECAY) / 100 * gameInfo->DeltaTime;
-	double targetBoost = boost.GetCurrentBoostAmount() - consumption;
-	if (targetBoost < 0) { targetBoost = 0; }
-	boost.SetCurrentBoostAmount(targetBoost);
 }
 
 void PathingMode::SetBallPosition(GameInformation* gameInfo) {
 	BallPosition = Vector{ GetRandomFieldX(), GetRandomFieldY(), GetRandomFieldZ() / (float) 1.5};
-}
-
-void PathingMode::LimitBoost(GameInformation* gameInfo) {
-	BoostWrapper boost = gameInfo->Car.GetBoostComponent();
-	if (boost.GetCurrentBoostAmount() > MAX_BOOST) {
-		boost.SetCurrentBoostAmount(MAX_BOOST);
-	}
 }
 
 void PathingMode::RunGame(GameInformation* gameInfo) {
@@ -33,17 +27,11 @@ void PathingMode::RunGame(GameInformation* gameInfo) {
 	ball.SetLocation(BallPosition);
 	ball.SetVelocity(Vector{});
 	ball.SetAngularVelocity(Vector{}, false);
-
-	// Decay boost
-	DecayBoost(gameInfo);
-
-	// Limit boost
-	LimitBoost(gameInfo);
 }
 
 void PathingMode::EnableGame(GameInformation* gameInfo) {
-	gameInfo->Car.GetBoostComponent().SetCurrentBoostAmount(MAX_BOOST);
-	TimeRemaining = PATHING_BASE_DEFAULT_TIME;
+	gameInfo->Car.GetBoostComponent().SetCurrentBoostAmount(FULL_BOOST);
+	TimeRemaining = PathingBaseTime;
 }
 
 void PathingMode::OnDisable(GameInformation*) {
@@ -53,18 +41,18 @@ void PathingMode::OnDisable(GameInformation*) {
 void PathingMode::OnBallHit(GameInformation* gameInfo) {
 	BallWrapper ball = gameInfo->Ball;
 	double increase = (ball.GetLocation().Z / MAX_SPEED);
-	TimeRemaining += BALL_TOUCH_TIME_INCREASE + increase;
+	TimeRemaining += PathingBallTouchTime + increase;
 	CarWrapper car = gameInfo->Car;
 	Vector velocity = car.GetVelocity();
-	velocity.Z -= RECOVERY_BONUS;
+	velocity.Z -= PathingRecoveryBonus;
 	car.SetVelocity(velocity);
 	BoostWrapper boost = car.GetBoostComponent();
-	boost.SetBoostAmount(boost.GetCurrentBoostAmount() + gameInfo->Ball.GetLocation().Z / BALL_HEIGHT_BOOST_GAIN_FACTOR);
+	boost.SetBoostAmount(boost.GetCurrentBoostAmount() + gameInfo->Ball.GetLocation().Z / PathingBallHeightBoostBonus);
 	SetBallPosition(gameInfo);
 }
 
 void PathingMode::OnBoostPickUp(GameInformation* gameInfo) {
-	TimeRemaining += BOOST_PICKUP_TIME_INCREASE;
+	TimeRemaining += PathingBoostCollectionTime;
 }
 
 void PathingMode::OnGoalScored(GameInformation*) {

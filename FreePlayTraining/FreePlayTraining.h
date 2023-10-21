@@ -47,6 +47,9 @@ private:
 	void RenderModeSelection();
 	void RenderModeSettings();
 	void RenderRecoveryOptions();
+	void RenderPathingOptions();
+	void RenderPopOptions();
+
 	void RenderGameSettings();
 
 	void RenderButton(const char*, const char*, std::function<void()>);
@@ -58,6 +61,7 @@ private:
 
 	void RegisterVariables();
 	void RegisterVariable(std::string, float, float, float, std::shared_ptr<float>*);
+	void ResetVariables();
 
 	// Recovery
 
@@ -65,6 +69,25 @@ private:
 	std::shared_ptr<float> RecoveryBoostFactor;
 	std::shared_ptr<float> RecoveryTimeFactor;
 	std::shared_ptr<float> RecoveryMaxBoost;
+	std::shared_ptr<float> RecoveryBoostDecay;
+
+	// Pathing
+
+	std::shared_ptr<float> PathingBaseTime;
+	std::shared_ptr<float> PathingBoostCollectionTime;
+	std::shared_ptr<float> PathingBallTouchTime;
+	std::shared_ptr<float> PathingRecoveryBonus;
+	std::shared_ptr<float> PathingBallBoostBonus;
+	std::shared_ptr<float> PathingMaxBoost;
+	std::shared_ptr<float> PathingBoostDecay;
+
+	// Pop
+
+	std::shared_ptr<float> PopBaseTime;
+	std::shared_ptr<float> PopMinBallHeight;
+	std::shared_ptr<float> PopGravity;
+	std::shared_ptr<float> PopMaxBoost;
+	std::shared_ptr<float> PopBoostDecay;
 
 	// Util
 

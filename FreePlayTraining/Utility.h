@@ -45,6 +45,8 @@
 #define BIG_BOOST_AMOUNT 1.0
 #define DEFAULT_BOOST_DECAY 33
 
+#define DEFAULT_GRAVITY 650.0f
+
 // Custom Values
 
 #define MIN_RECOVERY_DISTANCE MAX_SPEED

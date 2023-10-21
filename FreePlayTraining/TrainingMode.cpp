@@ -1,11 +1,7 @@
 #include "pch.h"
 #include "TrainingMode.h"
 
-TrainingMode::TrainingMode() {
-
-}
-
-TrainingMode::TrainingMode(double greenTime, double yellowTime, bool autoReduceTime) : GreenTime(greenTime), YellowTime(yellowTime), AutoReduceTime(autoReduceTime) {
+TrainingMode::TrainingMode(double greenTime, double yellowTime, bool autoReduceTime, unsigned int maxBoost, float boostDecay) : GreenTime(greenTime), YellowTime(yellowTime), AutoReduceTime(autoReduceTime), MaxBoost((double) maxBoost / 100), BoostDecay(boostDecay) {
 	Reset();
 }
 
@@ -68,7 +64,7 @@ void TrainingMode::ExecuteGameLoop(GameInformation* gameInfo) {
 }
 
 void TrainingMode::ExecuteTimer(GameInformation* gameInfo) {
-	if (!IsActive() || IsStalled()) { return; }
+	if (!IsInGame()) { return; }
 
 	CurrentTime += gameInfo->DeltaTime;
 
@@ -101,6 +97,27 @@ void TrainingMode::RenderPreGameTimer(CanvasWrapper canvas) {
 	canvas.DrawString(std::to_string(timeLeft), FONT_SIZE_MEDIUM, FONT_SIZE_MEDIUM, true);
 }
 
+void TrainingMode::LimitBoost(GameInformation* gameInfo) {
+	BoostWrapper boost = gameInfo->Car.GetBoostComponent();
+	if (boost.GetCurrentBoostAmount() > MaxBoost) {
+		boost.SetCurrentBoostAmount(MaxBoost);
+	}
+}
+
+void TrainingMode::DecayBoost(GameInformation* gameInfo) {
+	CarWrapper car = gameInfo->Car;
+	BoostWrapper boost = car.GetBoostComponent();
+
+	double consumption = ((double) BoostDecay + (car.GetInput().HoldingBoost / 2) * DEFAULT_BOOST_DECAY) / 100 * gameInfo->DeltaTime;
+	double targetBoost = boost.GetCurrentBoostAmount() - consumption;
+	if (targetBoost < 0) { targetBoost = 0; }
+	boost.SetCurrentBoostAmount(targetBoost);
+}
+
+void TrainingMode::DisableGoals(GameInformation* gameInfo) {
+	if (!DisableGoal) { return; }
+}
+
 void TrainingMode::Reset() {
 	CurrentScore = 0;
 	PossibleScore = 0;
@@ -110,7 +127,7 @@ void TrainingMode::Reset() {
 
 void TrainingMode::EndGame() {
 	TimeRemaining = 0;
-	EndGameTimer = END_TIME;
+	EndGameTimer = END_GAME_TIMER;
 }
 
 void TrainingMode::StallGame(GameInformation* gameInfo, double time) {
@@ -139,12 +156,18 @@ bool TrainingMode::IsActive() {
 	return (Running || !IsGameOver);
 }
 
+bool TrainingMode::IsInGame() {
+	return (Running && !IsGameOver);
+}
+
 void TrainingMode::Run(GameInformation* gameInfo) {
 	// Pre Game
 	OnGameEnable(gameInfo);
 	ExecutePreGameTimer(gameInfo);
 
 	// Mid Game
+	LimitBoost(gameInfo);
+	DecayBoost(gameInfo);
 	ExecuteGameStall(gameInfo);
 	ExecuteTimer(gameInfo);
 	ExecuteGameLoop(gameInfo);

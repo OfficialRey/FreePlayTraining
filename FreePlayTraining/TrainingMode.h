@@ -9,7 +9,7 @@
 #define PRE_GAME_TIMER 3
 #define DEFAULT_ROTATION Rotator{0, (int) (((double) MAX_ROTATION.Y - (double) MIN_ROTATION.Y) * 0.25),0}
 
-#define END_TIME 5
+#define END_GAME_TIMER 5
 
 class TrainingMode
 {
@@ -18,9 +18,13 @@ private:
 	GameInformation* StallState = 0;
 
 	bool AutoReduceTime = false;
+	bool DisableGoal = true;
 
-	double PreGameTimer = 0;
-	double EndGameTimer = 0;
+	double MaxBoost = FULL_BOOST;
+	double BoostDecay = 0;
+	
+	double PreGameTimer = PRE_GAME_TIMER;
+	double EndGameTimer = END_GAME_TIMER;
 
 	double YellowTime = 0;
 	double GreenTime = 0;
@@ -37,7 +41,10 @@ private:
 	void OnGameEnable(GameInformation*);
 
 	void RenderPreGameTimer(CanvasWrapper);
-	
+
+	void LimitBoost(GameInformation*);
+	void DecayBoost(GameInformation*);
+	void DisableGoals(GameInformation*);
 
 protected:
 
@@ -60,15 +67,14 @@ protected:
 	void SkipGoalReplay();
 
 public:
-
-	TrainingMode();
-	TrainingMode(double, double, bool);
+	TrainingMode(double greenTime = 0, double yellowTime = 0, bool autoReduceTime = true, unsigned int maxBoost = 100, float boostDecay = 0);
 
 	bool IsGameOver = false;
 	bool Running = false;
 
 	bool IsStalled();
 	bool IsActive();
+	bool IsInGame();
 
 	void Run(GameInformation*);
 
