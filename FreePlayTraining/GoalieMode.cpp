@@ -11,8 +11,9 @@ void GoalieMode::StartMode(GameInformation* gameInfo) {
 	float distance = ballToGoal.magnitude();
 
 	Vector carPosition = ballPosition.clone();
-	carPosition = carPosition + (ballToGoal * 0.3);
+	carPosition = carPosition + (ballToGoal * 0.3f);
 	carPosition.Z = CAR_HEIGHT;
+	carPosition.X *= 1.2f;
 	Vector carVelocity = ballToGoal.clone();
 	carVelocity.Z = 0;
 
@@ -20,11 +21,14 @@ void GoalieMode::StartMode(GameInformation* gameInfo) {
 
 	car.SetLocation(carPosition);
 	car.SetVelocity(carVelocity);
+	car.SetAngularVelocity(Vector{}, false);
 	car.SetRotation(VectorToRotator(carVelocity));
 
 	ball.SetLocation(ballPosition);
 	ball.SetVelocity(ballToGoal);
 	ball.SetAngularVelocity(GetRandomCarSpeed(), false);
+
+	StallGame(gameInfo, STALL_TIME);
 }
 
 void GoalieMode::RunGame(GameInformation*) {
@@ -32,8 +36,8 @@ void GoalieMode::RunGame(GameInformation*) {
 }
 
 
-void GoalieMode::EnableGame(GameInformation*) {
-
+void GoalieMode::EnableGame(GameInformation* gameInfo) {
+	StartMode(gameInfo);
 }
 
 void GoalieMode::OnDisable(GameInformation*) {
@@ -44,8 +48,8 @@ void GoalieMode::OnBallHit(GameInformation* gameInfo) {
 	StartMode(gameInfo);
 }
 
-void GoalieMode::OnGoalScored(GameInformation*) {
-
+void GoalieMode::OnGoalScored(GameInformation* gameInfo) {
+	SkipGoalReplay();
 }
 
 void GoalieMode::OnReplayBegin(GameInformation*) {

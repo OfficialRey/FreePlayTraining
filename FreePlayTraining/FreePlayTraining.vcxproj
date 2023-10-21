@@ -92,8 +92,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FreePlayTrainingEvent.cpp" />
-    <ClCompile Include="FreePlayTrainingSettings.cpp" />
+    <ClCompile Include="FreePlayTrainingInterface.cpp" />
     <ClCompile Include="FreePlayTrainingUtil.cpp" />
+    <ClCompile Include="FreePlayVariables.cpp" />
     <ClCompile Include="GoalieMode.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imguivariouscontrols.cpp" />

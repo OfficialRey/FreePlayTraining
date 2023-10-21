@@ -2,19 +2,18 @@
 
 #include "TrainingMode.h"
 
-#define STARTING_TIME 15
-#define BOOST_PICKUP_TIME_INCREASE 0.33
+#define PATHING_BASE_DEFAULT_TIME 15
+#define BOOST_PICKUP_TIME_INCREASE 0.66
 #define BALL_TOUCH_TIME_INCREASE 3
-#define CUSTOM_BOOST_DECAY_PER_SECOND 3
-#define BOOST_DECAY_PER_SECOND 33
+#define CUSTOM_BOOST_DECAY_PER_SECOND 1
 #define BALL_HEIGHT_BOOST_GAIN_FACTOR (150 * 100)
 
 #define RECOVERY_BONUS 600
 
 #define MAX_BOOST 0.75
 
-#define TIMER_YELLOW 7
-#define TIMER_GREEN 12
+#define PATHING_TIMER_YELLOW 7
+#define PATHING_TIMER_GREEN 12
 
 class PathingMode : public TrainingMode
 {
@@ -23,7 +22,6 @@ private:
 
 	Vector BallPosition{0, 0 , 100};
 
-	void StartMode(GameInformation*);
 	void DecayBoost(GameInformation*);
 	void SetBallPosition(GameInformation*);
 	void LimitBoost(GameInformation*);

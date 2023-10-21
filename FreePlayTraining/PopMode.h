@@ -6,9 +6,9 @@
 
 #include "TrainingMode.h"
 
-#define START_TIME 30
-#define TIMER_GREEN 20
-#define TIMER_YELLOW 10
+#define POP_START_TIME 30
+#define POP_TIMER_GREEN 20
+#define POP_TIMER_YELLOW 10
 
 #define MIN_BALL_HEIGHT 200
 

@@ -6,7 +6,35 @@ TrainingMode::TrainingMode() {
 }
 
 TrainingMode::TrainingMode(double greenTime, double yellowTime, bool autoReduceTime) : GreenTime(greenTime), YellowTime(yellowTime), AutoReduceTime(autoReduceTime) {
-	
+	Reset();
+}
+
+void TrainingMode::ExecuteGameStall(GameInformation* gameInfo) {
+	if (!IsStalled()) { return; }
+
+	// Apply ball and car states
+
+	CarWrapper oldCar = gameInfo->Car;
+	CarWrapper newCar = StallState->Car;
+
+	BoostWrapper oldBoost = oldCar.GetBoostComponent();
+	BoostWrapper newBoost = newCar.GetBoostComponent();
+
+	oldCar.SetVelocity(newCar.GetVelocity());
+	oldCar.SetLocation(newCar.GetLocation());
+	oldCar.SetAngularVelocity(newCar.GetAngularVelocity(), false);
+	oldCar.SetRotation(newCar.GetRotation());
+	oldBoost.SetCurrentBoostAmount(newBoost.GetCurrentBoostAmount());
+
+	BallWrapper oldBall = gameInfo->Ball;
+	BallWrapper newBall = StallState->Ball;
+
+	oldBall.SetVelocity(newBall.GetVelocity());
+	oldBall.SetLocation(newBall.GetLocation());
+	oldBall.SetAngularVelocity(newBall.GetAngularVelocity(), false);
+	oldBall.SetRotation(newBall.GetRotation());
+		
+	StallTime -= gameInfo->DeltaTime;
 }
 
 void TrainingMode::ExecutePreGameTimer(GameInformation* gameInfo) {
@@ -18,8 +46,9 @@ void TrainingMode::ExecutePreGameTimer(GameInformation* gameInfo) {
 	car.SetVelocity(Vector{});
 	car.SetRotation(DEFAULT_ROTATION);
 	car.SetAngularVelocity(Vector{}, false);
+	car.GetBoostComponent().SetCurrentBoostAmount(FULL_BOOST);
 
-	ball.SetLocation(Vector{ 0, 0, CAR_HEIGHT });
+	ball.SetLocation(Vector{ 0, 0, BALL_RADIUS * 2 });
 	ball.SetVelocity(Vector{});
 	ball.SetRotation(Rotator{});
 	ball.SetAngularVelocity(Vector{}, false);
@@ -28,18 +57,18 @@ void TrainingMode::ExecutePreGameTimer(GameInformation* gameInfo) {
 }
 
 void TrainingMode::ExecutePostGameTimer(GameInformation* gameInfo) {
-	if (!IsGameOver) { return; }
+	if (!IsGameOver || IsStalled()) { return; }
 		EndGameTimer -= gameInfo->DeltaTime;
 }
 
 
 void TrainingMode::ExecuteGameLoop(GameInformation* gameInfo) {
-	if (!IsActive()) { return; }
+	if (!IsActive() || IsStalled()) { return; }
 	RunGame(gameInfo);
 }
 
 void TrainingMode::ExecuteTimer(GameInformation* gameInfo) {
-	if (!IsActive()) { return; }
+	if (!IsActive() || IsStalled()) { return; }
 
 	CurrentTime += gameInfo->DeltaTime;
 
@@ -57,6 +86,7 @@ void TrainingMode::ExecuteTimer(GameInformation* gameInfo) {
 void TrainingMode::OnGameEnable(GameInformation* gameInfo) {
 	if (!Running) {
 		Running = true;
+		_globalCvarManager->executeCommand(COMMAND_LIMITED_BOOST);
 		EnableGame(gameInfo);
 	}
 }
@@ -83,8 +113,30 @@ void TrainingMode::EndGame() {
 	EndGameTimer = END_TIME;
 }
 
+void TrainingMode::StallGame(GameInformation* gameInfo, double time) {
+	StallTime = time;
+	StallState = gameInfo;
+}
+
+void TrainingMode::SetBoostLimitation(bool value) {
+	if (value) {
+		_globalCvarManager->executeCommand(COMMAND_LIMITED_BOOST);
+	}
+	else {
+		_globalCvarManager->executeCommand(COMMAND_UNLIMITED_BOOST);
+	}
+}
+
+void TrainingMode::SkipGoalReplay() {
+
+}
+
+bool TrainingMode::IsStalled() {
+	return StallTime > 0;
+}
+
 bool TrainingMode::IsActive() {
-	return Running || !IsGameOver;
+	return (Running || !IsGameOver);
 }
 
 void TrainingMode::Run(GameInformation* gameInfo) {
@@ -93,6 +145,7 @@ void TrainingMode::Run(GameInformation* gameInfo) {
 	ExecutePreGameTimer(gameInfo);
 
 	// Mid Game
+	ExecuteGameStall(gameInfo);
 	ExecuteTimer(gameInfo);
 	ExecuteGameLoop(gameInfo);
 
@@ -101,7 +154,7 @@ void TrainingMode::Run(GameInformation* gameInfo) {
 }
 
 void TrainingMode::OnEnable(GameInformation* gameInfo) {
-	PreGameTimer = STARTING_TIME;
+	PreGameTimer = PRE_GAME_TIMER;
 	IsGameOver = false;
 }
 

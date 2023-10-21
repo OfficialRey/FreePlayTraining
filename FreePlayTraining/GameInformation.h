@@ -4,8 +4,6 @@
 
 #include "Utility.h"
 
-#include "FreePlayCar.h"
-
 struct GameInformation {
 
 public:
@@ -36,7 +34,7 @@ private:
 	unsigned long long PreviousTime;
 
 	void CalculateDeltaTime() {
-		unsigned long long currentTime = GetTimeMilliSeconds();
+		unsigned long long currentTime = (unsigned long long) GetTimeMilliSeconds();
 		DeltaTime = (currentTime - PreviousTime) / MILLI_SECONDS;
 		PreviousTime = currentTime;
 	}

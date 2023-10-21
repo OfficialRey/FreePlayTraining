@@ -2,23 +2,15 @@
 #include "Utility.h"
 #include "PathingMode.h"
 
-PathingMode::PathingMode() : TrainingMode(TIMER_GREEN, TIMER_YELLOW, true) {
+PathingMode::PathingMode() : TrainingMode(PATHING_TIMER_GREEN, PATHING_TIMER_YELLOW, true) {
 
-}
-
-void PathingMode::StartMode(GameInformation* gameInfo) {
-	CarWrapper car = gameInfo->Car;
-	BallWrapper ball = gameInfo->Ball;
-
-	TimeRemaining = STARTING_TIME;
-	CurrentTime = 0;
 }
 
 void PathingMode::DecayBoost(GameInformation* gameInfo) {
 	CarWrapper car = gameInfo->Car;
 	BoostWrapper boost = car.GetBoostComponent();
 
-	double consumption = ((double) CUSTOM_BOOST_DECAY_PER_SECOND + car.GetInput().HoldingBoost * BOOST_DECAY_PER_SECOND) / 100 * gameInfo->DeltaTime;
+	double consumption = ((double) CUSTOM_BOOST_DECAY_PER_SECOND + (car.GetInput().HoldingBoost / 2) * DEFAULT_BOOST_DECAY) / 100 * gameInfo->DeltaTime;
 	double targetBoost = boost.GetCurrentBoostAmount() - consumption;
 	if (targetBoost < 0) { targetBoost = 0; }
 	boost.SetCurrentBoostAmount(targetBoost);
@@ -51,6 +43,7 @@ void PathingMode::RunGame(GameInformation* gameInfo) {
 
 void PathingMode::EnableGame(GameInformation* gameInfo) {
 	gameInfo->Car.GetBoostComponent().SetCurrentBoostAmount(MAX_BOOST);
+	TimeRemaining = PATHING_BASE_DEFAULT_TIME;
 }
 
 void PathingMode::OnDisable(GameInformation*) {

@@ -5,7 +5,6 @@
 // Field Values
 
 #define FLOOR 0
-#define BALL_RADIUS 92.75
 #define CEILING 2044
 #define HALF_CEILING (CEILING / 2)
 #define QUARTER_CEILING (CEILING / 4)
@@ -38,11 +37,13 @@
 #define QUARTER_SPEED (MAX_SPEED / 4)
 
 #define CAR_HEIGHT 90
+#define BALL_RADIUS 92.75
 
 #define FULL_BOOST 100
 #define START_BOOST_AMOUNT 0.33
 #define SMALL_BOOST_AMOUNT 0.12
 #define BIG_BOOST_AMOUNT 1.0
+#define DEFAULT_BOOST_DECAY 33
 
 // Custom Values
 
@@ -70,6 +71,12 @@
 #define HOOK_GOAL_REPLAY_END "Function GameEvent_Soccar_TA.ReplayPlayback.EndState"
 #define HOOK_PLAYER_FREEPLAY_RESET "Function TAGame.GameInfo_TA.PlayerResetTraining"
 #define HOOK_MATCH_QUIT "Function TAGame.GameEvent_Soccar_TA.Destroyed"
+
+// Commands
+
+#define COMMAND_UNLIMITED_BOOST "boost set unlimited"
+#define COMMAND_LIMITED_BOOST "boost set limited"
+#define COMMAND_SKIP_REPLAY "restart_players"
 
 float GetRandomFieldX();
 

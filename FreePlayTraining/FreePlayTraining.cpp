@@ -2,11 +2,6 @@
 
 #include "FreePlayTraining.h"
 
-#include "RecoveryMode.h"
-#include "PathingMode.h"
-#include "GoalieMode.h"
-#include "PopMode.h"
-
 #include "Utility.h"
 
 BAKKESMOD_PLUGIN(FreePlayTraining, "A plugin to help develop several abilities using freeplay", plugin_version, PLUGINTYPE_FREEPLAY)
@@ -15,6 +10,7 @@ std::shared_ptr<CVarManagerWrapper> _globalCvarManager;
 
 FreePlayTraining::~FreePlayTraining() {
 	delete GameInfo;
+	delete CurrentMode;
 }
 
 void FreePlayTraining::onLoad()
@@ -66,11 +62,16 @@ void FreePlayTraining::onLoad()
 	cvarManager->registerNotifier(POP_COMMAND, [this](std::vector<std::string> args) {
 		ChangeCurrentMode(new PopMode{});
 		}, "", PERMISSION_ALL);
+
+	// Variables
+
+	RegisterVariables();
 }
 
 void FreePlayTraining::ChangeCurrentMode(TrainingMode* mode) {
 	// Free memory of old TrainingMode
 	if (CurrentMode) { 
+		if (!IsInFreeplay()) { cvarManager->executeCommand(FREEPLAY_COMMAND); }
 		CurrentMode->OnDisable(GameInfo);
 		gameWrapper->UnregisterDrawables();
 		delete CurrentMode;

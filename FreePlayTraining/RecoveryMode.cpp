@@ -1,8 +1,7 @@
 #include "pch.h"
-#include "Utility.h"
 #include "RecoveryMode.h"
 
-RecoveryMode::RecoveryMode() : TrainingMode(TIMER_GREEN, TIMER_YELLOW, true) {
+RecoveryMode::RecoveryMode() : BaseTime(_globalCvarManager->getCvar(RECOVERY_BASE_TIME_TITLE).getFloatValue()), BoostFactor(_globalCvarManager->getCvar(RECOVERY_BOOST_FACTOR_TITLE).getFloatValue()), TimeFactor(_globalCvarManager->getCvar(RECOVERY_TIME_FACTOR_TITLE).getFloatValue()), TrainingMode(RECOVERY_TIMER_GREEN, RECOVERY_TIMER_YELLOW, true) {
 
 }
 
@@ -25,10 +24,10 @@ void RecoveryMode::SetTargetPosition(GameInformation* gameInfo) {
 	RecoveryTarget = target;
 
 	// Calculate car values
-	float boost = (float) ((distance + position.Z / (float) 2) / MIN_RECOVERY_DISTANCE * BOOST_MULTIPLIER);
+	float boost = (float) ((distance + position.Z / (float) 2) / MIN_RECOVERY_DISTANCE * BOOST_MULTIPLIER) * BoostFactor;
 
 	Vector velocity = GetRandomCarSpeed();
-	velocity.Z = (float)(QUARTER_SPEED + (rand() % QUARTER_SPEED));
+	velocity.Z = (float) (QUARTER_SPEED + (rand() % QUARTER_SPEED));
 
 	Rotator rotation = GetRandomRotation();
 
@@ -50,7 +49,9 @@ void RecoveryMode::SetTargetPosition(GameInformation* gameInfo) {
 	Vector playerDirection = velocity.getNormalized();
 	float angle = Vector::dot(playerToBall, playerDirection);
 
-	TimeRemaining = BASE_RECOVERY_TIME + ((distance + RecoveryPosition.Z + RecoveryTarget.Z+ velocity.magnitude()) - (1.5 * angle * distance)) / MAX_SPEED;
+	float bonusTime = ((distance + RecoveryPosition.Z + RecoveryTarget.Z + velocity.magnitude()) - (1.5 * angle * distance)) / MAX_SPEED;
+
+	TimeRemaining = BaseTime + bonusTime * TimeFactor;
 }
 
 void RecoveryMode::LoseRound(GameInformation* gameInfo) {
@@ -76,7 +77,7 @@ void RecoveryMode::RunGame(GameInformation* gameInfo) {
 }
 
 void RecoveryMode::EnableGame(GameInformation*) {
-	TimeRemaining = BASE_RECOVERY_TIME;
+	TimeRemaining = RECOVERY_BASE_DEFAULT_TIME;
 }
 
 void RecoveryMode::OnDisable(GameInformation*) {

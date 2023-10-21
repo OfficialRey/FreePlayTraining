@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "PopMode.h"
 
-PopMode::PopMode() : TrainingMode(TIMER_GREEN, TIMER_YELLOW, false) {
+PopMode::PopMode() : TrainingMode(POP_TIMER_GREEN, POP_TIMER_YELLOW, false) {
 
 }
 
@@ -36,7 +36,7 @@ void PopMode::EnableGame(GameInformation* gameInfo) {
 	car.GetBoostComponent().SetCurrentBoostAmount(FULL_BOOST);
 
 	CurrentTime = 0;
-	TimeRemaining = START_TIME;
+	TimeRemaining = POP_START_TIME;
 }
 
 void PopMode::OnDisable(GameInformation*) {

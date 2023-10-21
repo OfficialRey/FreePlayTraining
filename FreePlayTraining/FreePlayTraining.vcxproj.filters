@@ -105,7 +105,10 @@
     <ClCompile Include="FreePlayTrainingUtil.cpp">
       <Filter>Plugin\src</Filter>
     </ClCompile>
-    <ClCompile Include="FreePlayTrainingSettings.cpp">
+    <ClCompile Include="FreePlayTrainingInterface.cpp">
+      <Filter>Plugin\src</Filter>
+    </ClCompile>
+    <ClCompile Include="FreePlayVariables.cpp">
       <Filter>Plugin\src</Filter>
     </ClCompile>
   </ItemGroup>

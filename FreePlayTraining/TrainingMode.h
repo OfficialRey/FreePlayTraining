@@ -6,7 +6,7 @@
 #include "Utility.h"
 
 #define STARTING_LOCATION Vector{0, -200, 20}
-#define STARTING_TIME 3
+#define PRE_GAME_TIMER 3
 #define DEFAULT_ROTATION Rotator{0, (int) (((double) MAX_ROTATION.Y - (double) MIN_ROTATION.Y) * 0.25),0}
 
 #define END_TIME 5
@@ -14,6 +14,8 @@
 class TrainingMode
 {
 private:
+
+	GameInformation* StallState = 0;
 
 	bool AutoReduceTime = false;
 
@@ -23,14 +25,18 @@ private:
 	double YellowTime = 0;
 	double GreenTime = 0;
 
-	void ExecutePreGameTimer(GameInformation* gameInfo);
-	void ExecutePostGameTimer(GameInformation* gameInfo);
-	void ExecuteGameLoop(GameInformation* gameInfo);
+	double StallTime = 0;
 
-	void ExecuteTimer(GameInformation* gameInfo);
-	void OnGameEnable(GameInformation* gameInfo);
+	void ExecuteGameStall(GameInformation*);
 
-	void RenderPreGameTimer(CanvasWrapper canvas);
+	void ExecutePreGameTimer(GameInformation*);
+	void ExecutePostGameTimer(GameInformation*);
+	void ExecuteGameLoop(GameInformation*);
+
+	void ExecuteTimer(GameInformation*);
+	void OnGameEnable(GameInformation*);
+
+	void RenderPreGameTimer(CanvasWrapper);
 	
 
 protected:
@@ -44,9 +50,14 @@ protected:
 	void Reset();
 	void EndGame();
 
+	void StallGame(GameInformation*, double);
+
 	virtual void RunGame(GameInformation*) = 0;
 	virtual void EnableGame(GameInformation*) = 0;
 	virtual void RenderGame(CanvasWrapper) = 0;
+
+	void SetBoostLimitation(bool);
+	void SkipGoalReplay();
 
 public:
 
@@ -56,6 +67,7 @@ public:
 	bool IsGameOver = false;
 	bool Running = false;
 
+	bool IsStalled();
 	bool IsActive();
 
 	void Run(GameInformation*);

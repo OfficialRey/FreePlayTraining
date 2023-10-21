@@ -10,22 +10,30 @@
 
 #include "version.h"
 
-#include "TrainingMode.h"
+#include "RecoveryMode.h"
+#include "PathingMode.h"
+#include "GoalieMode.h"
+#include "PopMode.h"
 
 #define RECOVERY_COMMAND "load_recovery"
 #define PATHING_COMMAND "load_boost_pathing"
 #define POP_COMMAND "load_ball_pop"
 #define GOALIE_COMMAND "load_ball_save"
 
+#define FREEPLAY_COMMAND "load_freeplay"
+
 constexpr auto plugin_version = stringify(VERSION_MAJOR) "." stringify(VERSION_MINOR) "." stringify(VERSION_PATCH) "." stringify(VERSION_BUILD);
 
 
-class FreePlayTraining : public BakkesMod::Plugin::BakkesModPlugin, public BakkesMod::Plugin::PluginSettingsWindow
+class FreePlayTraining : public BakkesMod::Plugin::BakkesModPlugin, public SettingsWindowBase
 {
 
+	enum MenuContext{RECOVERY, PATHING, POP, GOALIE};
+
 private:
-	GameInformation* GameInfo;
-	TrainingMode* CurrentMode;
+	MenuContext CurrentContext = RECOVERY;
+	GameInformation* GameInfo = nullptr;
+	TrainingMode* CurrentMode = nullptr;
 
 
 	void ChangeCurrentMode(TrainingMode*);
@@ -34,6 +42,39 @@ private:
 
 	void UpdateInfoPackage();
 
+	// GUI
+
+	void RenderModeSelection();
+	void RenderModeSettings();
+	void RenderRecoveryOptions();
+	void RenderGameSettings();
+
+	void RenderButton(const char*, const char*, std::function<void()>);
+	void RenderIntSlider(const char*, const char*, const char*, int, int);
+	void RenderFloatSlider(const char*, const char*, const char*, float, float);
+	float ClampValue(float, float, float);
+
+	// Variables
+
+	void RegisterVariables();
+	void RegisterVariable(std::string, float, float, float, std::shared_ptr<float>*);
+
+	// Recovery
+
+	std::shared_ptr<float> RecoveryBaseTime;
+	std::shared_ptr<float> RecoveryBoostFactor;
+	std::shared_ptr<float> RecoveryTimeFactor;
+	std::shared_ptr<float> RecoveryMaxBoost;
+
+	// Util
+
+	TrainingMode* GetCurrentGUIMode();
+	ServerWrapper GetServerWrapper();
+	BallWrapper GetBall();
+	CarWrapper GetLocalCar();
+	CameraWrapper GetCamera();
+	bool IsInFreeplay();
+
 public:
 
 	void onLoad() override;
@@ -41,12 +82,11 @@ public:
 	// GUI
 
 	void RenderSettings() override;
-	void RenderModeSelection();
 
-	virtual std::string GetPluginName();
-	virtual void SetImGuiContext(uintptr_t);
 
 	~FreePlayTraining();
+
+	// Events
 
 	void Run();
 	void OnBallHit();
@@ -56,11 +96,4 @@ public:
 	void OnReplayEnd();
 	void OnResetTraining();
 	void OnQuitMatch();
-
-	ServerWrapper GetServerWrapper();
-	BallWrapper GetBall();
-	CarWrapper GetLocalCar();
-	CameraWrapper GetCamera();
-	bool IsInFreeplay();
-
 };

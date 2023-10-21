@@ -5,7 +5,8 @@
 #include "Utility.h"
 #include "TrainingMode.h"
 
-#define SHOT_FACTOR 0.5
+#define SHOT_FACTOR 0.5f
+#define STALL_TIME 2
 
 class GoalieMode : public TrainingMode
 {
