@@ -88,7 +88,7 @@ void FreePlayTraining::ChangeCurrentMode(TrainingMode* mode) {
 
 void FreePlayTraining::CheckCurrentMode() {
 	if (!CurrentMode) { return; }
-	if (GameInfo->IsValid() && CurrentMode->IsActive() && IsInFreeplay()) { return; }
+	if (GameInfo->IsValid() && !CurrentMode->IsState(DONE) && IsInFreeplay()) { return; }
 	ResetMode();
 }
 

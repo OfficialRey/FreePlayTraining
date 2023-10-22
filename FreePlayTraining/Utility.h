@@ -36,13 +36,13 @@
 #define HALF_SPEED (MAX_SPEED / 2)
 #define QUARTER_SPEED (MAX_SPEED / 4)
 
-#define CAR_HEIGHT 90
-#define BALL_RADIUS 92.75
+#define CAR_GROUND 17.01f
+#define BALL_RADIUS 92.75f
 
 #define FULL_BOOST 100
-#define START_BOOST_AMOUNT 0.33
-#define SMALL_BOOST_AMOUNT 0.12
-#define BIG_BOOST_AMOUNT 1.0
+#define START_BOOST_AMOUNT 0.33f
+#define SMALL_BOOST_AMOUNT 0.12f
+#define BIG_BOOST_AMOUNT 1.0f
 #define DEFAULT_BOOST_DECAY 33
 
 #define DEFAULT_GRAVITY 650.0f
@@ -93,6 +93,8 @@ Rotator GetRandomRotation();
 double GetTimeSeconds();
 
 double GetTimeMilliSeconds();
+
+std::string GetScoreString(int, int);
 
 std::string GetTimeString(double);
 

@@ -68,7 +68,7 @@ void PathingMode::OnReplayEnd(GameInformation*) {
 }
 
 void PathingMode::OnTimeRunOut(GameInformation*) {
-	IsGameOver = true;
+	EndGame();
 }
 
 void PathingMode::RenderGame(CanvasWrapper canvas) {

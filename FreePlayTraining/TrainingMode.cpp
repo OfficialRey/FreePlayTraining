@@ -5,19 +5,18 @@ TrainingMode::TrainingMode(double greenTime, double yellowTime, bool autoReduceT
 	Reset();
 }
 
+void TrainingMode::ChangeCurrentTrainingState(TrainingState newState) {
+	OldTrainingState = CurrentTrainingState;
+	CurrentTrainingState = newState;
+}
+
 void TrainingMode::ExecuteGameStall(GameInformation* gameInfo) {
-	if (!IsStalled() || StallState == 0 || !StallState->IsValid) { return; }
-	if (StallDelay < STALL_DELAY) {
-		StallDelay += gameInfo->DeltaTime;
-		if (StallState) { delete StallState; }
-		StallState = new GameState{ gameInfo };
-		return;
-	}
+	if (CurrentTrainingState != STALLED) { return; }
 
 	// Apply ball and car states
-
 	CarWrapper car = gameInfo->Car;
 	BoostWrapper boost = car.GetBoostComponent();
+
 	car.SetLocation(StallState->CarLocation);
 	car.SetVelocity(StallState->CarVelocity);
 	car.SetAngularVelocity(StallState->CarAngularVelocity, false);
@@ -34,7 +33,7 @@ void TrainingMode::ExecuteGameStall(GameInformation* gameInfo) {
 }
 
 void TrainingMode::ExecutePreGameTimer(GameInformation* gameInfo) {
-	if (PreGameTimer <= 0) { return; }
+	if (CurrentTrainingState != PRE_GAME) { return; }
 	CarWrapper car = gameInfo->Car;
 	BallWrapper ball = gameInfo->Ball;
 
@@ -50,21 +49,26 @@ void TrainingMode::ExecutePreGameTimer(GameInformation* gameInfo) {
 	ball.SetAngularVelocity(Vector{}, false);
 
 	PreGameTimer -= gameInfo->DeltaTime;
+
+	if (PreGameTimer <= 0) {
+		ChangeCurrentTrainingState(RUNNING);
+	}
 }
 
 void TrainingMode::ExecutePostGameTimer(GameInformation* gameInfo) {
-	if (!IsGameOver || IsStalled()) { return; }
-		EndGameTimer -= gameInfo->DeltaTime;
+	if (CurrentTrainingState != POST_GAME) { return; }
+		PostGameTimer -= gameInfo->DeltaTime;
+		if (PostGameTimer <= 0) { CurrentTrainingState = DONE; }
 }
 
 
 void TrainingMode::ExecuteGameLoop(GameInformation* gameInfo) {
-	if (!IsActive() || IsStalled()) { return; }
+	if (CurrentTrainingState != RUNNING) { return; }
 	RunGame(gameInfo);
 }
 
 void TrainingMode::ExecuteTimer(GameInformation* gameInfo) {
-	if (!IsInGame()) { return; }
+	if (CurrentTrainingState != RUNNING) { return; }
 
 	CurrentTime += gameInfo->DeltaTime;
 
@@ -80,14 +84,13 @@ void TrainingMode::ExecuteTimer(GameInformation* gameInfo) {
 }
 
 void TrainingMode::OnGameEnable(GameInformation* gameInfo) {
-	if (!Running) {
-		Running = true;
-		_globalCvarManager->executeCommand(COMMAND_LIMITED_BOOST);
-		EnableGame(gameInfo);
-	}
+	ChangeCurrentTrainingState(PRE_GAME);
+	_globalCvarManager->executeCommand(COMMAND_LIMITED_BOOST);
+	EnableGame(gameInfo);
 }
 
 void TrainingMode::RenderPreGameTimer(CanvasWrapper canvas) {
+	if (CurrentTrainingState != PRE_GAME) { return; }
 	// Render Timer
 	canvas.SetPosition(Vector2F{ (float) canvas.GetSize().X / 2 - (FONT_SIZE_MEDIUM / 2), (float) canvas.GetSize().Y / 2 });
 	canvas.SetColor(COLOR_WHITE);
@@ -97,7 +100,24 @@ void TrainingMode::RenderPreGameTimer(CanvasWrapper canvas) {
 	canvas.DrawString(std::to_string(timeLeft), FONT_SIZE_MEDIUM, FONT_SIZE_MEDIUM, true);
 }
 
+void TrainingMode::RenderGameResult(CanvasWrapper canvas) {
+	if (CurrentTrainingState != POST_GAME) { return; }
+	std::string result;
+
+	if (PossibleScore > 0) {
+		result = "Result: " + GetScoreString((int) CurrentScore, (int) PossibleScore);
+	} else if(CurrentTime > 0) {
+		result = "Result: " + GetTimeString(CurrentTime);
+	}
+
+	canvas.SetPosition(Vector2F{ CalculateCenterPosition(canvas, result, FONT_SIZE_MEDIUM),  (float)(canvas.GetSize().Y * 0.2) });
+	canvas.SetColor(COLOR_WHITE);
+	canvas.DrawString(result, FONT_SIZE_MEDIUM, FONT_SIZE_MEDIUM, true);
+
+}
+
 void TrainingMode::LimitBoost(GameInformation* gameInfo) {
+	if (CurrentTrainingState != RUNNING) { return; }
 	BoostWrapper boost = gameInfo->Car.GetBoostComponent();
 	if (boost.GetCurrentBoostAmount() > MaxBoost) {
 		boost.SetCurrentBoostAmount(MaxBoost);
@@ -105,7 +125,7 @@ void TrainingMode::LimitBoost(GameInformation* gameInfo) {
 }
 
 void TrainingMode::DecayBoost(GameInformation* gameInfo) {
-	if (IsStalled() || !IsInGame()) { return; }
+	if (CurrentTrainingState != RUNNING) { return; }
 	CarWrapper car = gameInfo->Car;
 	BoostWrapper boost = car.GetBoostComponent();
 
@@ -129,12 +149,15 @@ void TrainingMode::Reset() {
 
 void TrainingMode::EndGame() {
 	TimeRemaining = 0;
-	EndGameTimer = END_GAME_TIMER;
+	PostGameTimer = END_GAME_TIMER;
+	ChangeCurrentTrainingState(POST_GAME);
 }
 
-void TrainingMode::StallGame(GameInformation* gameInfo, double time) {
+void TrainingMode::StallGame(GameState* gameState, double time) {
 	StallTime = time;
-	StallDelay = 0;
+	if (StallState) { delete StallState; }
+	StallState = gameState;
+	ChangeCurrentTrainingState(STALLED);
 }
 
 void TrainingMode::SetBoostLimitation(bool value) {
@@ -150,21 +173,8 @@ void TrainingMode::SkipGoalReplay() {
 
 }
 
-bool TrainingMode::IsStalled() {
-	return StallTime > 0;
-}
-
-bool TrainingMode::IsActive() {
-	return (Running || !IsGameOver);
-}
-
-bool TrainingMode::IsInGame() {
-	return (Running && !IsGameOver);
-}
-
 void TrainingMode::Run(GameInformation* gameInfo) {
 	// Pre Game
-	OnGameEnable(gameInfo);
 	ExecutePreGameTimer(gameInfo);
 
 	// Mid Game
@@ -180,28 +190,37 @@ void TrainingMode::Run(GameInformation* gameInfo) {
 
 void TrainingMode::OnEnable(GameInformation* gameInfo) {
 	PreGameTimer = PRE_GAME_TIMER;
-	IsGameOver = false;
+	ChangeCurrentTrainingState(PRE_GAME);
+}
+
+void TrainingMode::ReplayBegin(GameInformation* gameInfo) {
+	ChangeCurrentTrainingState(REPLAY);
+	OnReplayBegin(gameInfo);
+}
+
+void TrainingMode::ReplayEnd(GameInformation* gameInfo) {
+	ChangeCurrentTrainingState(OldTrainingState);
+	OnReplayEnd(gameInfo);
 }
 
 void TrainingMode::Render(CanvasWrapper canvas) {
-	if (IsGameOver) {
-		if (EndGameTimer > 0) {
-			RenderGameEnd(canvas);
-		} else {
-			Running = false;
-		}
-		return;
-	}
+	if (CurrentTrainingState == POST_GAME) { RenderGameEnd(canvas); }
 
 	// PreGameTimer
-	if (PreGameTimer > 0) {
-		RenderPreGameTimer(canvas);
-		return;
-	}
+	RenderPreGameTimer(canvas);
+	RenderGameResult(canvas);
 
 	// Score and Time
+	RenderStats(canvas);
+	RenderGame(canvas);
+}
+
+void TrainingMode::RenderStats(CanvasWrapper canvas) {
+	if (CurrentTrainingState != RUNNING) { return; }
 	if (TimeRemaining > 0) { RenderTime(canvas, TimeRemaining, YellowTime, GreenTime); }
 	if (PossibleScore > 0) { RenderScore(canvas, CurrentScore, PossibleScore); }
+}
 
-	RenderGame(canvas);
+bool TrainingMode::IsState(TrainingState state) {
+	return CurrentTrainingState == state;
 }

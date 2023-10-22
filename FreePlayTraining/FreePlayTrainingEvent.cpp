@@ -6,28 +6,28 @@
 // Events
 
 void FreePlayTraining::OnBallHit() {
-	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
+	if (!CurrentMode || !CurrentMode->IsState(RUNNING)) { return; }
 	CurrentMode->OnBallHit(GameInfo);
 }
 
 void FreePlayTraining::OnCollectBoost() {
-	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
+	if (!CurrentMode || !CurrentMode->IsState(RUNNING)) { return; }
 	CurrentMode->OnBoostPickUp(GameInfo);
 }
 
 void FreePlayTraining::OnGoalScored() {
-	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
+	if (!CurrentMode || !CurrentMode->IsState(RUNNING)) { return; }
 	CurrentMode->OnGoalScored(GameInfo);
 }
 
 void FreePlayTraining::OnReplayStart() {
-	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
-	CurrentMode->OnReplayBegin(GameInfo);
+	if (!CurrentMode || !CurrentMode->IsState(RUNNING)) { return; }
+	CurrentMode->ReplayBegin(GameInfo);
 }
 
 void FreePlayTraining::OnReplayEnd() {
-	if (!CurrentMode || CurrentMode->IsGameOver) { return; }
-	CurrentMode->OnReplayEnd(GameInfo);
+	if (!CurrentMode || !CurrentMode->IsState(RUNNING)) { return; }
+	CurrentMode->ReplayEnd(GameInfo);
 }
 
 void FreePlayTraining::OnResetTraining() {

@@ -13,13 +13,22 @@
 
 #define STALL_DELAY 0.1
 
+enum TrainingState {
+	PRE_GAME,
+	POST_GAME,
+	STALLED,
+	RUNNING,
+	REPLAY,
+	DONE
+};
+
 class TrainingMode
 {
 private:
 
 	GameState* StallState = 0;
-
-	double StallDelay = 0; // Wait for the engine to set actor values
+	TrainingState OldTrainingState;
+	TrainingState CurrentTrainingState;
 
 	bool AutoReduceTime = false; // Use clock automatically
 	bool DisableGoal = true; // Disable goal scoring
@@ -28,12 +37,14 @@ private:
 	double BoostDecay = 0;
 
 	double PreGameTimer = PRE_GAME_TIMER;
-	double EndGameTimer = END_GAME_TIMER;
+	double PostGameTimer = END_GAME_TIMER;
 
 	double YellowTime = 0;
 	double GreenTime = 0;
 
 	double StallTime = 0;
+
+	void ChangeCurrentTrainingState(TrainingState);
 
 	void ExecuteGameStall(GameInformation*);
 
@@ -45,10 +56,13 @@ private:
 	void OnGameEnable(GameInformation*);
 
 	void RenderPreGameTimer(CanvasWrapper);
+	void RenderGameResult(CanvasWrapper);
 
 	void LimitBoost(GameInformation*);
 	void DecayBoost(GameInformation*);
 	void DisableGoals(GameInformation*);
+
+	void RenderStats(CanvasWrapper);
 
 protected:
 
@@ -61,10 +75,12 @@ protected:
 	void Reset();
 	void EndGame();
 
-	void StallGame(GameInformation*, double);
+	void StallGame(GameState*, double);
 
 	virtual void RunGame(GameInformation*) = 0;
 	virtual void EnableGame(GameInformation*) = 0;
+	virtual void OnReplayBegin(GameInformation*) = 0;
+	virtual void OnReplayEnd(GameInformation*) = 0;
 	virtual void RenderGame(CanvasWrapper) = 0;
 
 	void SetBoostLimitation(bool);
@@ -72,13 +88,6 @@ protected:
 
 public:
 	TrainingMode(double greenTime = 0, double yellowTime = 0, bool autoReduceTime = true, unsigned int maxBoost = 100, float boostDecay = 0);
-
-	bool IsGameOver = false;
-	bool Running = false;
-
-	bool IsStalled();
-	bool IsActive();
-	bool IsInGame();
 
 	void Run(GameInformation*);
 
@@ -88,10 +97,13 @@ public:
 	virtual void OnBallHit(GameInformation*) = 0;
 	virtual void OnBoostPickUp(GameInformation*) = 0;
 	virtual void OnGoalScored(GameInformation*) = 0;
-	virtual void OnReplayBegin(GameInformation*) = 0;
-	virtual void OnReplayEnd(GameInformation*) = 0;
 	virtual void OnTimeRunOut(GameInformation*) = 0;
+
+	void ReplayBegin(GameInformation*);
+	void ReplayEnd(GameInformation*);
 
 	void Render(CanvasWrapper);
 	virtual void RenderGameEnd(CanvasWrapper) = 0;
+
+	bool IsState(TrainingState);
 };

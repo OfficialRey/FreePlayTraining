@@ -40,6 +40,10 @@ double GetTimeMilliSeconds() {
 	return (double)(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
 }
 
+std::string GetScoreString(int currentScore, int possibleScore) {
+	return "Score: " + std::to_string(currentScore) + " / " + std::to_string(possibleScore);
+}
+
 std::string GetTimeString(double time) {
 	float fractional, whole;
 

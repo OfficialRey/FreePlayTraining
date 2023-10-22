@@ -31,7 +31,7 @@ void PopMode::DecayTime(GameInformation* gameInfo) {
 
 void PopMode::CheckGameOver() {
 	if (TimeRemaining > 0) { return; }
-	IsGameOver = true;
+	EndGame();
 }
 
 void PopMode::RunGame(GameInformation* gameInfo) {
@@ -75,7 +75,7 @@ void PopMode::OnDisable(GameInformation*) {
 }
 
  void PopMode::OnTimeRunOut(GameInformation*) {
-	 IsGameOver = true;
+	 EndGame();
  }
 
  void PopMode::RenderGame(CanvasWrapper canvas) {

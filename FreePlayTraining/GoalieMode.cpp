@@ -6,30 +6,45 @@ void GoalieMode::StartMode(GameInformation* gameInfo) {
 	CarWrapper car = gameInfo->Car;
 	BallWrapper ball = gameInfo->Ball;
 
-	Vector ballPosition = Vector{ GetRandomFieldX() / 2, GetRandomFieldY() / 3, GetRandomFieldZ() / (float) 1.5 };
-	Vector ballToGoal = (ORANGE_GOAL - ballPosition) * SHOT_FACTOR;
+	Vector ballLocation = Vector{ GetRandomFieldX() / 2, GetRandomFieldY() / 3, GetRandomFieldZ() / (float) 1.5 };
+	Vector ballToGoal = (ORANGE_GOAL - ballLocation) * SHOT_FACTOR;
 	float distance = ballToGoal.magnitude();
 
-	Vector carPosition = ballPosition.clone();
-	carPosition = carPosition + (ballToGoal * 0.3f);
-	carPosition.Z = CAR_HEIGHT;
-	carPosition.X *= 1.2f;
+	Vector carLocation = ballLocation.clone();
+	carLocation = carLocation + (ballToGoal * 0.3f);
+	carLocation.Z = CAR_GROUND;
+	carLocation.X *= 1.2f;
 	Vector carVelocity = ballToGoal.clone();
 	carVelocity.Z = 0;
 
-	// TODO: Rotation
-
-	car.SetLocation(carPosition);
+	car.SetLocation(carLocation);
 	car.SetVelocity(carVelocity);
 	car.SetAngularVelocity(Vector{}, false);
 	car.SetRotation(VectorToRotator(carVelocity));
 
-	ball.SetLocation(ballPosition);
+	ball.SetLocation(ballLocation);
 	ball.SetVelocity(ballToGoal);
 	ball.SetAngularVelocity(GetRandomCarSpeed(), false);
 
-	StallGame(gameInfo, STALL_TIME);
-	_globalCvarManager->log("Created shot!");
+	GameState* gameState = new GameState{
+		// Car
+		carLocation,
+		carVelocity,
+		Vector{},
+		VectorToRotator(carVelocity),
+		100.0f,
+		// Ball
+		ballLocation,
+		ballToGoal,
+		GetRandomCarSpeed(),
+		Rotator{}
+	};
+
+	StallGame(gameState, STALL_TIME);
+}
+
+void GoalieMode::CheckSave(GameInformation* gameInfo) {
+
 }
 
 void GoalieMode::RunGame(GameInformation*) {

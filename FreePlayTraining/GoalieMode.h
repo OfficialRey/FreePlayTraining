@@ -6,7 +6,7 @@
 #include "TrainingMode.h"
 
 #define SHOT_FACTOR 0.5f
-#define STALL_TIME 2
+#define STALL_TIME 1
 
 class GoalieMode : public TrainingMode
 {
@@ -18,6 +18,7 @@ private:
 	};
 
 	void StartMode(GameInformation*);
+	void CheckSave(GameInformation*);
 
 public:
 
