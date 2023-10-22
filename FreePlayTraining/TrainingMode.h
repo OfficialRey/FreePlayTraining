@@ -11,18 +11,22 @@
 
 #define END_GAME_TIMER 5
 
+#define STALL_DELAY 0.1
+
 class TrainingMode
 {
 private:
 
-	GameInformation* StallState = 0;
+	GameState* StallState = 0;
 
-	bool AutoReduceTime = false;
-	bool DisableGoal = true;
+	double StallDelay = 0; // Wait for the engine to set actor values
+
+	bool AutoReduceTime = false; // Use clock automatically
+	bool DisableGoal = true; // Disable goal scoring
 
 	double MaxBoost = FULL_BOOST;
 	double BoostDecay = 0;
-	
+
 	double PreGameTimer = PRE_GAME_TIMER;
 	double EndGameTimer = END_GAME_TIMER;
 

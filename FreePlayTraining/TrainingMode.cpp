@@ -6,29 +6,29 @@ TrainingMode::TrainingMode(double greenTime, double yellowTime, bool autoReduceT
 }
 
 void TrainingMode::ExecuteGameStall(GameInformation* gameInfo) {
-	if (!IsStalled()) { return; }
+	if (!IsStalled() || StallState == 0 || !StallState->IsValid) { return; }
+	if (StallDelay < STALL_DELAY) {
+		StallDelay += gameInfo->DeltaTime;
+		if (StallState) { delete StallState; }
+		StallState = new GameState{ gameInfo };
+		return;
+	}
 
 	// Apply ball and car states
 
-	CarWrapper oldCar = gameInfo->Car;
-	CarWrapper newCar = StallState->Car;
+	CarWrapper car = gameInfo->Car;
+	BoostWrapper boost = car.GetBoostComponent();
+	car.SetLocation(StallState->CarLocation);
+	car.SetVelocity(StallState->CarVelocity);
+	car.SetAngularVelocity(StallState->CarAngularVelocity, false);
+	car.SetRotation(StallState->CarRotation);
+	boost.SetCurrentBoostAmount(StallState->CarBoost);
 
-	BoostWrapper oldBoost = oldCar.GetBoostComponent();
-	BoostWrapper newBoost = newCar.GetBoostComponent();
-
-	oldCar.SetVelocity(newCar.GetVelocity());
-	oldCar.SetLocation(newCar.GetLocation());
-	oldCar.SetAngularVelocity(newCar.GetAngularVelocity(), false);
-	oldCar.SetRotation(newCar.GetRotation());
-	oldBoost.SetCurrentBoostAmount(newBoost.GetCurrentBoostAmount());
-
-	BallWrapper oldBall = gameInfo->Ball;
-	BallWrapper newBall = StallState->Ball;
-
-	oldBall.SetVelocity(newBall.GetVelocity());
-	oldBall.SetLocation(newBall.GetLocation());
-	oldBall.SetAngularVelocity(newBall.GetAngularVelocity(), false);
-	oldBall.SetRotation(newBall.GetRotation());
+	BallWrapper ball = gameInfo->Ball;
+	ball.SetLocation(StallState->BallLocation);
+	ball.SetVelocity(StallState->BallVelocity);
+	ball.SetAngularVelocity(StallState->BallAngularVelocity, false);
+	ball.SetRotation(StallState->BallRotation);
 		
 	StallTime -= gameInfo->DeltaTime;
 }
@@ -134,7 +134,7 @@ void TrainingMode::EndGame() {
 
 void TrainingMode::StallGame(GameInformation* gameInfo, double time) {
 	StallTime = time;
-	StallState = gameInfo;
+	StallDelay = 0;
 }
 
 void TrainingMode::SetBoostLimitation(bool value) {

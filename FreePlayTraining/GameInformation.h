@@ -39,3 +39,39 @@ private:
 		PreviousTime = currentTime;
 	}
 };
+
+struct GameState {
+
+	Vector CarLocation = 0;
+	Vector CarVelocity = 0;
+	Vector CarAngularVelocity = 0;
+	Rotator CarRotation = 0;
+	float CarBoost = 0;
+
+	Vector BallLocation = 0;
+	Vector BallVelocity = 0;
+	Vector BallAngularVelocity = 0;
+	Rotator BallRotation = 0;
+
+	bool IsValid = false;
+
+	GameState(GameInformation* gameInfo) {
+		if (!gameInfo->IsValid()) { return; }
+		CarWrapper car = gameInfo->Car;
+		BoostWrapper boost = car.GetBoostComponent();
+		BallWrapper ball = gameInfo->Ball;
+
+		CarLocation = car.GetLocation();
+		CarVelocity = car.GetVelocity();
+		CarAngularVelocity = car.GetAngularVelocity();
+		CarRotation = car.GetRotation();
+		CarBoost = boost.GetCurrentBoostAmount();
+
+		BallLocation = ball.GetLocation();
+		BallVelocity = ball.GetVelocity();
+		BallAngularVelocity = ball.GetAngularVelocity();
+		BallRotation = ball.GetRotation();
+
+		IsValid = true;
+	}
+};
