@@ -89,6 +89,11 @@ private:
 	std::shared_ptr<float> PopMaxBoost;
 	std::shared_ptr<float> PopBoostDecay;
 
+	// Goalie
+
+	std::shared_ptr<float> GoalieBallSpeed;
+	std::shared_ptr<float> GoalieBallPlacement;
+
 	// Util
 
 	TrainingMode* GetCurrentGUIMode();

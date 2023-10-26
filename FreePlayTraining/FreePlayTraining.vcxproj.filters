@@ -111,6 +111,9 @@
     <ClCompile Include="FreePlayVariables.cpp">
       <Filter>Plugin\src</Filter>
     </ClCompile>
+    <ClCompile Include="AirDribbleMode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imgui_rangeslider.h">
@@ -189,6 +192,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PopMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AirDribbleMode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

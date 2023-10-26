@@ -53,7 +53,6 @@ private:
 	void ExecuteGameLoop(GameInformation*);
 
 	void ExecuteTimer(GameInformation*);
-	void OnGameEnable(GameInformation*);
 
 	void RenderPreGameTimer(CanvasWrapper);
 	void RenderGameResult(CanvasWrapper);
@@ -76,6 +75,8 @@ protected:
 	void EndGame();
 
 	void StallGame(GameState*, double);
+
+	void AddScore(int, int);
 
 	virtual void RunGame(GameInformation*) = 0;
 	virtual void EnableGame(GameInformation*) = 0;

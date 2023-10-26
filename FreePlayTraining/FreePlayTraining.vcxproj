@@ -91,6 +91,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AirDribbleMode.cpp" />
     <ClCompile Include="FreePlayTrainingEvent.cpp" />
     <ClCompile Include="FreePlayTrainingInterface.cpp" />
     <ClCompile Include="FreePlayTrainingUtil.cpp" />
@@ -121,6 +122,7 @@
     <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AirDribbleMode.h" />
     <ClInclude Include="GameInformation.h" />
     <ClInclude Include="GoalieMode.h" />
     <ClInclude Include="imgui\imconfig.h" />

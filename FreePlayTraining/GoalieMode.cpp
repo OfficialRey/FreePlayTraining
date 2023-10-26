@@ -27,12 +27,14 @@ void GoalieMode::StartMode(GameInformation* gameInfo) {
 	ball.SetAngularVelocity(GetRandomCarSpeed(), false);
 
 	GameState* gameState = new GameState{
+
 		// Car
 		carLocation,
 		carVelocity,
 		Vector{},
 		VectorToRotator(carVelocity),
 		100.0f,
+
 		// Ball
 		ballLocation,
 		ballToGoal,
@@ -44,11 +46,25 @@ void GoalieMode::StartMode(GameInformation* gameInfo) {
 }
 
 void GoalieMode::CheckSave(GameInformation* gameInfo) {
+	if (!IsBallSaved(gameInfo)) { return; }
 
+	AddScore(1, 1);
+	StartMode(gameInfo);
 }
 
-void GoalieMode::RunGame(GameInformation*) {
+bool GoalieMode::IsBallSaved(GameInformation* gameInfo) {
+	BallWrapper ball = gameInfo->Ball;
+	Vector ballToGoalDirection = ORANGE_GOAL - ball.GetLocation();
+	Vector ballDirection = ball.GetVelocity();
 
+	double angle = CalculateVectorAngle(ballToGoalDirection, ballDirection);
+
+	// _globalCvarManager->log(std::to_string(angle));
+	return angle > MIN_SAVE_ANGLE;
+}
+
+void GoalieMode::RunGame(GameInformation* gameInfo) {
+	CheckSave(gameInfo);
 }
 
 
@@ -61,11 +77,11 @@ void GoalieMode::OnDisable(GameInformation*) {
 }
 
 void GoalieMode::OnBallHit(GameInformation* gameInfo) {
-	StartMode(gameInfo);
 }
 
 void GoalieMode::OnGoalScored(GameInformation* gameInfo) {
 	SkipGoalReplay();
+	AddScore(0, 1);
 }
 
 void GoalieMode::OnReplayBegin(GameInformation*) {

@@ -94,8 +94,7 @@ void FreePlayTraining::CheckCurrentMode() {
 
 void FreePlayTraining::ResetMode() {
 	ChangeCurrentMode(nullptr);
-
-	cvarManager->executeCommand("boost set unlimited");
+	cvarManager->executeCommand(COMMAND_UNLIMITED_BOOST);
 }
 
 void FreePlayTraining::UpdateInfoPackage() {

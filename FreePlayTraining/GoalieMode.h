@@ -8,6 +8,28 @@
 #define SHOT_FACTOR 0.5f
 #define STALL_TIME 1
 
+#define MIN_SAVE_ANGLE 75
+
+// Ball Speed
+
+#define GOALIE_BALL_SPEED_MIN_FACTOR 0.9f
+#define GOALIE_BALL_SPEED_DEFAULT_FACTOR 1.0f
+#define GOALIE_BALL_SPEED_MAX_FACTOR 1.2f
+
+#define GOALIE_BALL_SPEED_TITLE "GOALIE_BALL_SPEED"
+#define GOALIE_BALL_SPEED_USER_TITLE "Ball Speed"
+#define GOALIE_BALL_SPEED_USER_TOOLTIP "Change Ball Speed"
+
+// Shot Placement Height
+
+#define GOALIE_BALL_MIN_PLACEMENT 0.5f
+#define GOALIE_BALL_DEFAULT_PLACEMENT 0.8f
+#define GOALIE_BALL_MAX_PLACEMENT 1.0f
+
+#define GOALIE_BALL_PLACEMENT_TITLE "GOALIE_BALL_PLACEMENT"
+#define GOALIE_BALL_PLACEMENT_USER_TITLE "Ball Placement Strength"
+#define GOALIE_BALL_PLACEMENT_USER_TOOLTIP "Change Ball Placement Strength"
+
 class GoalieMode : public TrainingMode
 {
 private:
@@ -19,6 +41,7 @@ private:
 
 	void StartMode(GameInformation*);
 	void CheckSave(GameInformation*);
+	bool IsBallSaved(GameInformation*);
 
 public:
 

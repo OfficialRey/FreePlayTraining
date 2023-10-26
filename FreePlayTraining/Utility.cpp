@@ -2,7 +2,6 @@
 
 #include "Utility.h"
 
-#include <math.h>
 
 float GetRandomFieldX() {
 	return 2 * (float)(rand() % NO_CORNER_SIDE_WALL) - NO_CORNER_SIDE_WALL;
@@ -82,4 +81,13 @@ void RenderTime(CanvasWrapper canvas, double time, int yellow, int green) {
 	canvas.SetPosition(Vector2F{ CalculateCenterPosition(canvas, result, FONT_SIZE_MEDIUM), (float)(canvas.GetSize().Y * 0.2) });
 	canvas.SetColor(GetColorBasedOnTime(time, yellow, green));
 	canvas.DrawString(result, FONT_SIZE_MEDIUM, FONT_SIZE_MEDIUM, true);
+}
+
+double RadiansToDegrees(double radians) {
+	return radians * 180.0 / M_PI;
+}
+
+double CalculateVectorAngle(Vector a, Vector b) {
+	double radians = acos(Vector::dot(a, b) / (a.magnitude() * b.magnitude()));
+	return RadiansToDegrees(radians);
 }

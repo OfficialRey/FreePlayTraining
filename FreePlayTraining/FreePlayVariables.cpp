@@ -25,6 +25,10 @@ void FreePlayTraining::RegisterVariables() {
 	RegisterVariable(POP_GRAVITY_TITLE, POP_DEFAULT_GRAVITY, POP_MIN_GRAVITY, POP_MAX_GRAVITY, &PopGravity);
 	RegisterVariable(POP_BOOST_MAX_TITLE, POP_BOOST_DEFAULT_MAX, POP_BOOST_MIN_MAX, POP_BOOST_MAX_MAX, &PopMaxBoost);
 	RegisterVariable(POP_BOOST_DECAY_TITLE, POP_BOOST_DEFAULT_DECAY, POP_BOOST_MIN_DECAY, POP_BOOST_MAX_DECAY, &PopBoostDecay);
+
+	// Goalie
+	RegisterVariable(GOALIE_BALL_SPEED_TITLE, GOALIE_BALL_SPEED_DEFAULT_FACTOR, GOALIE_BALL_SPEED_MIN_FACTOR, GOALIE_BALL_SPEED_MAX_FACTOR, &GoalieBallSpeed);
+	RegisterVariable(GOALIE_BALL_PLACEMENT_TITLE, GOALIE_BALL_DEFAULT_PLACEMENT, GOALIE_BALL_MIN_PLACEMENT, GOALIE_BALL_MAX_PLACEMENT, &GoalieBallPlacement);
 }
 
 void FreePlayTraining::RegisterVariable(std::string variable, float defaultValue, float min, float max, std::shared_ptr<float> *ptr) {
@@ -61,6 +65,8 @@ void FreePlayTraining::ResetVariables() {
 		cvarManager->getCvar(POP_BOOST_DECAY_TITLE).ResetToDefault();
 		break;
 	case FreePlayTraining::GOALIE:
+		cvarManager->getCvar(GOALIE_BALL_SPEED_TITLE).ResetToDefault();
+		cvarManager->getCvar(GOALIE_BALL_PLACEMENT_TITLE).ResetToDefault();
 		break;
 	default:
 		break;

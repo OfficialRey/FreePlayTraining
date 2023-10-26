@@ -2,6 +2,10 @@
 
 #include "pch.h"
 
+#include <cmath>
+
+# define M_PI 3.14159265358979323846
+
 // Field Values
 
 #define FLOOR 0
@@ -105,3 +109,7 @@ LinearColor GetColorBasedOnTime(float, int, int);
 void RenderScore(CanvasWrapper, double, double);
 
 void RenderTime(CanvasWrapper , double, int, int);
+
+double RadiansToDegrees(double);
+
+double CalculateVectorAngle(Vector, Vector);

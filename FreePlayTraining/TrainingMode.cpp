@@ -30,6 +30,10 @@ void TrainingMode::ExecuteGameStall(GameInformation* gameInfo) {
 	ball.SetRotation(StallState->BallRotation);
 		
 	StallTime -= gameInfo->DeltaTime;
+
+	if (StallTime > 0) { return; }
+
+	ChangeCurrentTrainingState(OldTrainingState);
 }
 
 void TrainingMode::ExecutePreGameTimer(GameInformation* gameInfo) {
@@ -52,13 +56,17 @@ void TrainingMode::ExecutePreGameTimer(GameInformation* gameInfo) {
 
 	if (PreGameTimer <= 0) {
 		ChangeCurrentTrainingState(RUNNING);
+		_globalCvarManager->executeCommand(COMMAND_LIMITED_BOOST);
+		EnableGame(gameInfo);
 	}
 }
 
 void TrainingMode::ExecutePostGameTimer(GameInformation* gameInfo) {
 	if (CurrentTrainingState != POST_GAME) { return; }
 		PostGameTimer -= gameInfo->DeltaTime;
-		if (PostGameTimer <= 0) { CurrentTrainingState = DONE; }
+		if (PostGameTimer > 0) { return; }
+		ChangeCurrentTrainingState(DONE);
+		OnDisable(gameInfo);
 }
 
 
@@ -81,12 +89,6 @@ void TrainingMode::ExecuteTimer(GameInformation* gameInfo) {
 			OnTimeRunOut(gameInfo);
 		}
 	}
-}
-
-void TrainingMode::OnGameEnable(GameInformation* gameInfo) {
-	ChangeCurrentTrainingState(PRE_GAME);
-	_globalCvarManager->executeCommand(COMMAND_LIMITED_BOOST);
-	EnableGame(gameInfo);
 }
 
 void TrainingMode::RenderPreGameTimer(CanvasWrapper canvas) {
@@ -158,6 +160,11 @@ void TrainingMode::StallGame(GameState* gameState, double time) {
 	if (StallState) { delete StallState; }
 	StallState = gameState;
 	ChangeCurrentTrainingState(STALLED);
+}
+
+void TrainingMode::AddScore(int score, int possibleScore) {
+	CurrentScore += score;
+	PossibleScore += possibleScore;
 }
 
 void TrainingMode::SetBoostLimitation(bool value) {
