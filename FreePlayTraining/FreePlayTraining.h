@@ -116,6 +116,8 @@ public:
 
 	// Events
 
+	void RegisterCommands();
+	void RegisterEvents();
 	void Run();
 	void OnBallHit();
 	void OnCollectBoost();

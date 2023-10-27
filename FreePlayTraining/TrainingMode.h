@@ -14,6 +14,7 @@
 #define STALL_DELAY 0.1
 
 enum TrainingState {
+	UNDEFINED,
 	PRE_GAME,
 	POST_GAME,
 	STALLED,
@@ -27,8 +28,8 @@ class TrainingMode
 private:
 
 	GameState* StallState = 0;
-	TrainingState OldTrainingState;
-	TrainingState CurrentTrainingState;
+	TrainingState OldTrainingState = UNDEFINED;
+	TrainingState CurrentTrainingState = PRE_GAME;
 
 	bool AutoReduceTime = false; // Use clock automatically
 	bool DisableGoal = true; // Disable goal scoring
