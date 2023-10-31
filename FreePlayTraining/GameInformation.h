@@ -12,24 +12,20 @@ public:
 	BallWrapper Ball = 0;
 	double DeltaTime;
 
-	bool IsReplay;
-
 	GameInformation(CarWrapper car, BallWrapper ball) {
 		Car = car;
 		Ball = ball;
-		IsReplay = false;
 	}
 
 	void Update(CarWrapper car, BallWrapper ball) {
 		Car = car;
 		Ball = ball;
-		IsReplay = false;
 
 		CalculateDeltaTime();
 	}
 
 	bool IsValid() {
-		return Car && Ball && !IsReplay &&  DeltaTime >= 0;
+		return Car && Car.GetBoostComponent() && Ball &&  DeltaTime >= 0;
 	}
 
 private:
