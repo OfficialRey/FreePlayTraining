@@ -2,9 +2,7 @@
 
 #include "GoalieMode.h"
 
-void GoalieMode::StartMode(GameInformation* gameInfo) {
-	CarWrapper car = gameInfo->Car;
-	BallWrapper ball = gameInfo->Ball;
+void GoalieMode::CreateShot() {
 
 	Vector ballLocation = Vector{ GetRandomFieldX() / 2, GetRandomFieldY() / 3, GetRandomFieldZ() / (float) 1.5 };
 	Vector ballToGoal = (ORANGE_GOAL - ballLocation) * SHOT_FACTOR;
@@ -16,15 +14,6 @@ void GoalieMode::StartMode(GameInformation* gameInfo) {
 	carLocation.X *= 1.2f;
 	Vector carVelocity = ballToGoal.clone();
 	carVelocity.Z = 0;
-
-	car.SetLocation(carLocation);
-	car.SetVelocity(carVelocity);
-	car.SetAngularVelocity(Vector{}, false);
-	car.SetRotation(VectorToRotator(carVelocity));
-
-	ball.SetLocation(ballLocation);
-	ball.SetVelocity(ballToGoal);
-	ball.SetAngularVelocity(GetRandomCarSpeed(), false);
 
 	GameState* gameState = new GameState{
 
@@ -49,7 +38,7 @@ void GoalieMode::CheckSave(GameInformation* gameInfo) {
 	if (!IsBallSaved(gameInfo)) { return; }
 
 	AddScore(1, 1);
-	StartMode(gameInfo);
+	CreateShot();
 }
 
 bool GoalieMode::IsBallSaved(GameInformation* gameInfo) {
@@ -69,7 +58,7 @@ void GoalieMode::RunGame(GameInformation* gameInfo) {
 
 
 void GoalieMode::EnableGame(GameInformation* gameInfo) {
-	StartMode(gameInfo);
+	CreateShot();
 }
 
 void GoalieMode::OnDisable(GameInformation*) {
@@ -88,8 +77,8 @@ void GoalieMode::OnReplayBegin(GameInformation*) {
 
 }
 
-void GoalieMode::OnReplayEnd(GameInformation* gameInfo) {
-	StartMode(gameInfo);
+void GoalieMode::OnReplayEnd() {
+	CreateShot();
 }
 
 void GoalieMode::OnTimeRunOut(GameInformation*) {

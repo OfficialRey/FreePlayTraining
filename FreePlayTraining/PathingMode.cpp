@@ -63,7 +63,7 @@ void PathingMode::OnReplayBegin(GameInformation*) {
 
 }
 
-void PathingMode::OnReplayEnd(GameInformation*) {
+void PathingMode::OnReplayEnd() {
 
 }
 

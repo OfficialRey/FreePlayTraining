@@ -70,7 +70,7 @@ void PopMode::OnDisable(GameInformation*) {
  void PopMode::OnReplayBegin(GameInformation*) {
 
 }
- void PopMode::OnReplayEnd(GameInformation*) {
+ void PopMode::OnReplayEnd() {
 
 }
 

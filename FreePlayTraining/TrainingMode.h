@@ -82,7 +82,7 @@ protected:
 	virtual void RunGame(GameInformation*) = 0;
 	virtual void EnableGame(GameInformation*) = 0;
 	virtual void OnReplayBegin(GameInformation*) = 0;
-	virtual void OnReplayEnd(GameInformation*) = 0;
+	virtual void OnReplayEnd() = 0;
 	virtual void RenderGame(CanvasWrapper) = 0;
 
 	void SetBoostLimitation(bool);
@@ -102,7 +102,7 @@ public:
 	virtual void OnTimeRunOut(GameInformation*) = 0;
 
 	void ReplayBegin(GameInformation*);
-	void ReplayEnd(GameInformation*);
+	void ReplayEnd();
 
 	void Render(CanvasWrapper);
 	virtual void RenderGameEnd(CanvasWrapper) = 0;

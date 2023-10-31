@@ -115,9 +115,7 @@ void FreePlayTraining::RenderButton(const char* title, const char* tooltip, std:
 
 void FreePlayTraining::RenderFloatSlider(const char* variable,const char* title, const char* tooltip, float min, float max) {
 	CVarWrapper customVariable = cvarManager->getCvar(variable);
-	if (!customVariable) { 
-		cvarManager->log("Variable was null");
-		return; }
+	if (!customVariable) { return; }
 	float value = customVariable.getFloatValue();
 	if (ImGui::SliderFloat(title, &value, min, max)) {
 		customVariable.setValue(ClampValue(value, min, max));

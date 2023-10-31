@@ -110,7 +110,7 @@ void RecoveryMode::OnReplayBegin(GameInformation*) {
 
 }
 
-void RecoveryMode::OnReplayEnd(GameInformation*) {
+void RecoveryMode::OnReplayEnd() {
 
 }
 

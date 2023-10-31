@@ -40,15 +40,9 @@ void FreePlayTraining::ChangeCurrentMode(TrainingMode* mode) {
 	CurrentMode->OnEnable(GameInfo);
 }
 
-void FreePlayTraining::CheckCurrentMode() {
-	if (!CurrentMode && !CurrentMode->IsState(DONE) && IsInFreeplay()) { return; }
-	ResetMode();
-}
-
 void FreePlayTraining::ResetMode() {
 	ChangeCurrentMode(nullptr);
 	cvarManager->executeCommand(COMMAND_UNLIMITED_BOOST);
-	cvarManager->log("Reset game mode!");
 }
 
 void FreePlayTraining::UpdateInfoPackage() {
@@ -58,7 +52,6 @@ void FreePlayTraining::UpdateInfoPackage() {
 // Loop
 
 void FreePlayTraining::Run() {
-	CheckCurrentMode();
 	UpdateInfoPackage();
 	if (!CurrentMode || !GameInfo->IsValid()) { return; }
 	CurrentMode->Run(GameInfo);

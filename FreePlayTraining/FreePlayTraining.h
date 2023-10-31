@@ -37,7 +37,6 @@ private:
 
 
 	void ChangeCurrentMode(TrainingMode*);
-	void CheckCurrentMode();
 	void ResetMode();
 
 	void UpdateInfoPackage();

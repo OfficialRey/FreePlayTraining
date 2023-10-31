@@ -181,6 +181,7 @@ void TrainingMode::SkipGoalReplay() {
 }
 
 void TrainingMode::Run(GameInformation* gameInfo) {
+
 	// Pre Game
 	ExecutePreGameTimer(gameInfo);
 
@@ -205,9 +206,9 @@ void TrainingMode::ReplayBegin(GameInformation* gameInfo) {
 	OnReplayBegin(gameInfo);
 }
 
-void TrainingMode::ReplayEnd(GameInformation* gameInfo) {
+void TrainingMode::ReplayEnd() {
 	ChangeCurrentTrainingState(OldTrainingState);
-	OnReplayEnd(gameInfo);
+	OnReplayEnd();
 }
 
 void TrainingMode::Render(CanvasWrapper canvas) {
@@ -223,7 +224,7 @@ void TrainingMode::Render(CanvasWrapper canvas) {
 }
 
 void TrainingMode::RenderStats(CanvasWrapper canvas) {
-	if (CurrentTrainingState != RUNNING) { return; }
+	if (CurrentTrainingState != RUNNING && CurrentTrainingState != STALLED) { return; }
 	if (TimeRemaining > 0) { RenderTime(canvas, TimeRemaining, YellowTime, GreenTime); }
 	if (PossibleScore > 0) { RenderScore(canvas, CurrentScore, PossibleScore); }
 }

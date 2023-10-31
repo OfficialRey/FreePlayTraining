@@ -92,7 +92,7 @@ public:
 	virtual void OnBoostPickUp(GameInformation*);
 	virtual void OnGoalScored(GameInformation*);
 	virtual void OnReplayBegin(GameInformation*);
-	virtual void OnReplayEnd(GameInformation*);
+	virtual void OnReplayEnd();
 	virtual void OnTimeRunOut(GameInformation*);
 
 	virtual void RenderGame(CanvasWrapper);
