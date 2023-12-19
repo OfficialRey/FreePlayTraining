@@ -91,3 +91,9 @@ double CalculateVectorAngle(Vector a, Vector b) {
 	double radians = acos(Vector::dot(a, b) / (a.magnitude() * b.magnitude()));
 	return RadiansToDegrees(radians);
 }
+
+int Sign(double val) {
+	if (val > 0) return 1;
+	if (val < 0) return -1;
+	return 0;
+}

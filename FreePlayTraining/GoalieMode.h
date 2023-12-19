@@ -5,10 +5,20 @@
 #include "Utility.h"
 #include "TrainingMode.h"
 
+#define SHOT_HEIGHT_DISTANCE_FACTOR 0.52f
+#define SHOT_HEIGHT_LOCATION_FACTOR 0.55f
+#define SHOT_HEIGHT_ADJUSTMENT 1.2f
+#define SHOT_OFFSET 200
+
+//#define HIGH_SHOT_HEIGHT_FACTOR 0.05f
+
 #define SHOT_FACTOR 0.5f
+#define SHOT_MIN_SPEED MAX_SPEED * 1.5f
+#define SHOT_MAX_SPEED MAX_SPEED * 3
 #define STALL_TIME 1
 
-#define MIN_SAVE_ANGLE 75
+#define MIN_SAVE_ANGLE 45
+#define MIN_SHOT_SAVE_TIME 1
 
 // Ball Speed
 
@@ -34,6 +44,8 @@ class GoalieMode : public TrainingMode
 {
 private:
 
+	double BallHitTimer = 0;
+
 	enum ShotType {
 		BACKPOST,
 		AERIAL_REVERSE
@@ -45,7 +57,7 @@ private:
 
 public:
 
-	GoalieMode() = default;
+	GoalieMode();
 
 	virtual void RunGame(GameInformation*);
 	virtual void EnableGame(GameInformation*);
@@ -59,6 +71,6 @@ public:
 	virtual void OnTimeRunOut(GameInformation*);
 
 	virtual void RenderGame(CanvasWrapper);
-	virtual void RenderGameEnd(CanvasWrapper)	;
+	virtual void RenderGameEnd(CanvasWrapper);
 };
 

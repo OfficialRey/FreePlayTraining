@@ -1,13 +1,8 @@
 #include "pch.h"
 #include "TrainingMode.h"
 
-TrainingMode::TrainingMode(double greenTime, double yellowTime, bool autoReduceTime, unsigned int maxBoost, float boostDecay) : GreenTime(greenTime), YellowTime(yellowTime), AutoReduceTime(autoReduceTime), MaxBoost((double) maxBoost / 100), BoostDecay(boostDecay) {
+TrainingMode::TrainingMode(double greenTime, double yellowTime, bool autoReduceTime, unsigned int maxBoost, float boostDecay, bool disableGoal) : GreenTime(greenTime), YellowTime(yellowTime), AutoReduceTime(autoReduceTime), MaxBoost((double) maxBoost / 100), BoostDecay(boostDecay), DisableGoal(disableGoal) {
 	Reset();
-}
-
-void TrainingMode::ChangeCurrentTrainingState(TrainingState newState) {
-	OldTrainingState = CurrentTrainingState;
-	CurrentTrainingState = newState;
 }
 
 void TrainingMode::ExecuteGameStall(GameInformation* gameInfo) {
@@ -33,7 +28,7 @@ void TrainingMode::ExecuteGameStall(GameInformation* gameInfo) {
 
 	if (StallTime > 0) { return; }
 
-	ChangeCurrentTrainingState(OldTrainingState);
+	CurrentTrainingState = RUNNING;
 }
 
 void TrainingMode::ExecutePreGameTimer(GameInformation* gameInfo) {
@@ -55,7 +50,7 @@ void TrainingMode::ExecutePreGameTimer(GameInformation* gameInfo) {
 	PreGameTimer -= gameInfo->DeltaTime;
 
 	if (PreGameTimer <= 0) {
-		ChangeCurrentTrainingState(RUNNING);
+		CurrentTrainingState = RUNNING;
 		_globalCvarManager->executeCommand(COMMAND_LIMITED_BOOST);
 		EnableGame(gameInfo);
 	}
@@ -65,7 +60,7 @@ void TrainingMode::ExecutePostGameTimer(GameInformation* gameInfo) {
 	if (CurrentTrainingState != POST_GAME) { return; }
 		PostGameTimer -= gameInfo->DeltaTime;
 		if (PostGameTimer > 0) { return; }
-		ChangeCurrentTrainingState(DONE);
+		CurrentTrainingState = DONE;
 		OnDisable(gameInfo);
 }
 
@@ -139,7 +134,41 @@ void TrainingMode::DecayBoost(GameInformation* gameInfo) {
 
 void TrainingMode::DisableGoals(GameInformation* gameInfo) {
 	if (!DisableGoal) { return; }
-	// TODO: Make ball bounce off imaginary wall when about to enter the goal
+	BallWrapper ball = gameInfo->Ball;
+	Vector ballLocation = ball.GetLocation();
+
+	// Ensure Ball is on the goal line
+	if (ballLocation.Y > -BACK_WALL && ballLocation.Y < BACK_WALL) {
+		return;
+	}
+
+	// Ensure Ball is below crossbar
+	if (ballLocation.Z > GOAL_HEIGHT - BALL_RADIUS) {
+		return;
+	}
+
+	// Ensure ball is between both goal posts
+	if (ballLocation.X < -GOAL_CENTER_TO_POST + BALL_RADIUS && ballLocation.X > GOAL_CENTER_TO_POST - BALL_RADIUS) {
+		return;
+	}
+
+	// Ensure ball is moving towards the net
+	Vector ballVelocity = ball.GetVelocity();
+	if (Sign(ballVelocity.Y) != Sign(ballLocation.Y)) {
+		return;
+	}
+
+	Vector ballAngularVelocity = ball.GetAngularVelocity();
+
+	// Modify ball direction and apply restitution to create realistic bounce
+	double magnitude = ballVelocity.magnitude();
+	ballVelocity.Y *= -1;
+	ballVelocity *= BALL_RESTITUTION_FACTOR;
+	ballAngularVelocity.Y *= -1;
+	ballAngularVelocity *= BALL_RESTITUTION_FACTOR;
+
+	//Apply changes
+	ball.SetVelocity(ballVelocity);
 }
 
 void TrainingMode::Reset() {
@@ -152,14 +181,14 @@ void TrainingMode::Reset() {
 void TrainingMode::EndGame() {
 	TimeRemaining = 0;
 	PostGameTimer = END_GAME_TIMER;
-	ChangeCurrentTrainingState(POST_GAME);
+	CurrentTrainingState = POST_GAME;
 }
 
 void TrainingMode::StallGame(GameState* gameState, double time) {
 	StallTime = time;
 	if (StallState) { delete StallState; }
 	StallState = gameState;
-	ChangeCurrentTrainingState(STALLED);
+	CurrentTrainingState = STALLED;
 }
 
 void TrainingMode::AddScore(int score, int possibleScore) {
@@ -191,6 +220,7 @@ void TrainingMode::Run(GameInformation* gameInfo) {
 	DecayBoost(gameInfo);
 	ExecuteTimer(gameInfo);
 	ExecuteGameLoop(gameInfo);
+	DisableGoals(gameInfo);
 
 	// Post Game
 	ExecutePostGameTimer(gameInfo);
@@ -198,16 +228,15 @@ void TrainingMode::Run(GameInformation* gameInfo) {
 
 void TrainingMode::OnEnable(GameInformation* gameInfo) {
 	PreGameTimer = PRE_GAME_TIMER;
-	ChangeCurrentTrainingState(PRE_GAME);
+	CurrentTrainingState = PRE_GAME;
 }
 
 void TrainingMode::ReplayBegin(GameInformation* gameInfo) {
-	ChangeCurrentTrainingState(REPLAY);
+	CurrentTrainingState = REPLAY;
 	OnReplayBegin(gameInfo);
 }
 
 void TrainingMode::ReplayEnd() {
-	ChangeCurrentTrainingState(OldTrainingState);
 	OnReplayEnd();
 }
 

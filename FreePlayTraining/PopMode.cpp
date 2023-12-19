@@ -9,7 +9,8 @@ PopMode::PopMode() : PopBaseTime(_globalCvarManager->getCvar(POP_BASE_TIME_TITLE
 		POP_TIMER_YELLOW,
 		false,
 		_globalCvarManager->getCvar(POP_BOOST_MAX_TITLE).getIntValue(),
-		_globalCvarManager->getCvar(POP_BOOST_DECAY_TITLE).getIntValue()
+		_globalCvarManager->getCvar(POP_BOOST_DECAY_TITLE).getIntValue(),
+		true
 	) {
 
 }

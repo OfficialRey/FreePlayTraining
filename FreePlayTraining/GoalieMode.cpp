@@ -2,15 +2,37 @@
 
 #include "GoalieMode.h"
 
+GoalieMode::GoalieMode() :
+	TrainingMode(
+		0,
+		0,
+		false,
+		100,
+		0,
+		false
+	) {
+}
+
 void GoalieMode::CreateShot() {
 
-	Vector ballLocation = Vector{ GetRandomFieldX() / 2, GetRandomFieldY() / 3, GetRandomFieldZ() / (float) 1.5 };
-	Vector ballToGoal = (ORANGE_GOAL - ballLocation) * SHOT_FACTOR;
+	BallHitTimer = 0;
+
+	// Calculate Ball Direction
+	Vector ballLocation = Vector{ GetRandomFieldX() * 0.8f, GetRandomFieldY() / 3.0f, GetRandomFieldZ() / 1.5f };
+	Vector ballToGoal = ORANGE_GOAL - ballLocation;
 	float distance = ballToGoal.magnitude();
+
+	// Adjust Ball Velocity to create difficult shot
+	Vector ballVelocity = ballToGoal.getNormalized() * SHOT_MIN_SPEED;
+	ballVelocity.Z = (CEILING - ballLocation.Z) * distance / (float) BACK_WALL * SHOT_HEIGHT_DISTANCE_FACTOR;
+	ballVelocity.Z *= (SHOT_HEIGHT_ADJUSTMENT - SHOT_HEIGHT_ADJUSTMENT * ballLocation.Z / CEILING) * SHOT_HEIGHT_LOCATION_FACTOR; // Ball consistently overshoots when placed very high up
+
+	// Add some x to hit corners
+	ballVelocity.X += SHOT_OFFSET - rand() % SHOT_OFFSET * 2;
 
 	Vector carLocation = ballLocation.clone();
 	carLocation = carLocation + (ballToGoal * 0.3f);
-	carLocation.Z = CAR_GROUND;
+	carLocation.Z = OCTANE_ELEVATION;
 	carLocation.X *= 1.2f;
 	Vector carVelocity = ballToGoal.clone();
 	carVelocity.Z = 0;
@@ -26,7 +48,7 @@ void GoalieMode::CreateShot() {
 
 		// Ball
 		ballLocation,
-		ballToGoal,
+		ballVelocity,
 		GetRandomCarSpeed(),
 		Rotator{}
 	};
@@ -48,8 +70,14 @@ bool GoalieMode::IsBallSaved(GameInformation* gameInfo) {
 
 	double angle = CalculateVectorAngle(ballToGoalDirection, ballDirection);
 
-	// _globalCvarManager->log(std::to_string(angle));
-	return angle > MIN_SAVE_ANGLE;
+	if (angle < MIN_SAVE_ANGLE) {
+		BallHitTimer = 0;
+		return false;
+	}
+
+	BallHitTimer += gameInfo->DeltaTime;
+
+	return BallHitTimer > MIN_SHOT_SAVE_TIME;
 }
 
 void GoalieMode::RunGame(GameInformation* gameInfo) {

@@ -4,12 +4,12 @@
 
 #include <cmath>
 
-# define M_PI 3.14159265358979323846
+# define M_PI 3.14159265358979323846f
 
 // Field Values
 
 #define FLOOR 0
-#define CEILING 2044
+#define CEILING 2044.0f
 #define HALF_CEILING (CEILING / 2)
 #define QUARTER_CEILING (CEILING / 4)
 
@@ -23,16 +23,21 @@
 
 // Goal Values
 
-#define GOAL_HEIGHT 642.775
+#define GOAL_HEIGHT 642.775f
 #define GOAL_CENTER_HEIGHT (GOAL_HEIGHT / 2)
 
 #define GOAL_DEPTH 880
 #define BACK_GOAL (BACK_WALL + GOAL_DEPTH)
 
+#define GOAL_CENTER_TO_POST 892.755f
+
 #define BLUE_GOAL Vector{0, -BACK_GOAL, GOAL_CENTER_HEIGHT}
 #define ORANGE_GOAL Vector{0, BACK_GOAL, GOAL_CENTER_HEIGHT}
 
+
 // Game Constants
+
+#define BALL_RESTITUTION_FACTOR 0.6
 
 #define MIN_ROTATION Vector{-16364, -32768, -32768}
 #define MAX_ROTATION Vector{16340, 32764, 32764}
@@ -40,7 +45,7 @@
 #define HALF_SPEED (MAX_SPEED / 2)
 #define QUARTER_SPEED (MAX_SPEED / 4)
 
-#define CAR_GROUND 17.01f
+#define OCTANE_ELEVATION 17.01f
 #define BALL_RADIUS 92.75f
 
 #define FULL_BOOST 100
@@ -113,3 +118,5 @@ void RenderTime(CanvasWrapper , double, int, int);
 double RadiansToDegrees(double);
 
 double CalculateVectorAngle(Vector, Vector);
+
+int Sign(double);

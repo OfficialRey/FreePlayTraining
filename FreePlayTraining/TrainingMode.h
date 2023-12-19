@@ -28,12 +28,11 @@ class TrainingMode
 private:
 
 	GameState* StallState = 0;
-	TrainingState OldTrainingState = UNDEFINED;
 	TrainingState CurrentTrainingState = PRE_GAME;
 
 	bool AutoReduceTime = false; // Use clock automatically
 	bool DisableGoal = true; // Disable goal scoring
-
+	 
 	double MaxBoost = FULL_BOOST;
 	double BoostDecay = 0;
 
@@ -45,14 +44,10 @@ private:
 
 	double StallTime = 0;
 
-	void ChangeCurrentTrainingState(TrainingState);
-
 	void ExecuteGameStall(GameInformation*);
-
 	void ExecutePreGameTimer(GameInformation*);
 	void ExecutePostGameTimer(GameInformation*);
 	void ExecuteGameLoop(GameInformation*);
-
 	void ExecuteTimer(GameInformation*);
 
 	void RenderPreGameTimer(CanvasWrapper);
@@ -89,7 +84,7 @@ protected:
 	void SkipGoalReplay();
 
 public:
-	TrainingMode(double greenTime = 0, double yellowTime = 0, bool autoReduceTime = true, unsigned int maxBoost = 100, float boostDecay = 0);
+	TrainingMode(double greenTime = 0, double yellowTime = 0, bool autoReduceTime = true, unsigned int maxBoost = 100, float boostDecay = 0, bool disableGoal = false);
 
 	void Run(GameInformation*);
 
