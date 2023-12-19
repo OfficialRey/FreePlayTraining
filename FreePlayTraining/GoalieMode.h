@@ -10,7 +10,8 @@
 #define SHOT_HEIGHT_ADJUSTMENT 1.2f
 #define SHOT_OFFSET 200
 
-//#define HIGH_SHOT_HEIGHT_FACTOR 0.05f
+#define GOALIE_TITLE "Goalie Training"
+#define GOALIE_TOOLTIP "Show goalie training options"
 
 #define SHOT_FACTOR 0.5f
 #define SHOT_MIN_SPEED MAX_SPEED * 1.5f
@@ -40,9 +41,24 @@
 #define GOALIE_BALL_PLACEMENT_USER_TITLE "Ball Placement Strength"
 #define GOALIE_BALL_PLACEMENT_USER_TOOLTIP "Change Ball Placement Strength"
 
+
+// Min and Max Boost
+
+#define GOALIE_BOOST_MIN_MAX 25
+#define GOALIE_BOOST_DEFAULT_MAX 100
+#define GOALIE_BOOST_MAX_MAX 100
+
+#define GOALIE_BOOST_MAX_TITLE "GOALIE_MAX_BOOST"
+#define GOALIE_BOOST_USER_TITLE "Max Boost"
+#define GOALIE_BOOST_USER_TOOLTIP "Change Max Boost"
+
+
 class GoalieMode : public TrainingMode
 {
 private:
+
+	double GoalieBallSpeedFactor;
+	double GoalieBallPlacementFactor;
 
 	double BallHitTimer = 0;
 

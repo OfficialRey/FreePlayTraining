@@ -18,9 +18,6 @@
 #define POP_TITLE "Pop Control Training"
 #define POP_TOOLTIP "Show pop control training options"
 
-#define GOALIE_TITLE "Goalie Training"
-#define GOALIE_TOOLTIP "Show goalie training options"
-
 void FreePlayTraining::RenderSettings() {
 	RenderModeSelection();
 	RenderModeSettings();
@@ -58,6 +55,7 @@ void FreePlayTraining::RenderModeSettings() {
 		RenderPopOptions();
 		break;
 	case FreePlayTraining::GOALIE:
+		RenderGoalieOptions();
 		break;
 	default:
 		break;
@@ -102,6 +100,12 @@ void FreePlayTraining::RenderPopOptions() {
 	RenderFloatSlider(POP_GRAVITY_TITLE, POP_GRAVITY_USER_TITLE, POP_GRAVITY_USER_TOOLTIP, POP_MIN_GRAVITY, POP_MAX_GRAVITY);
 	RenderIntSlider(POP_BOOST_MAX_TITLE, POP_BOOST_MAX_USER_TITLE, POP_BOOST_MAX_USER_TOOLTIP, POP_BOOST_MIN_MAX, POP_BOOST_MAX_MAX);
 	RenderIntSlider(POP_BOOST_DECAY_TITLE, POP_BOOST_DECAY_USER_TITLE, POP_BOOST_DECAY_USER_TOOLTIP, POP_BOOST_MIN_DECAY, POP_BOOST_MAX_DECAY);
+}
+
+void FreePlayTraining::RenderGoalieOptions() {
+	RenderFloatSlider(GOALIE_BALL_SPEED_TITLE, GOALIE_BALL_SPEED_USER_TITLE, GOALIE_BALL_SPEED_USER_TOOLTIP, GOALIE_BALL_SPEED_MIN_FACTOR, GOALIE_BALL_SPEED_MAX_FACTOR);
+	RenderFloatSlider(GOALIE_BALL_PLACEMENT_TITLE, GOALIE_BALL_PLACEMENT_USER_TITLE, GOALIE_BALL_PLACEMENT_USER_TOOLTIP, GOALIE_BALL_MIN_PLACEMENT, GOALIE_BALL_MAX_PLACEMENT);
+	RenderIntSlider(GOALIE_BOOST_MAX_TITLE, GOALIE_BOOST_USER_TITLE, GOALIE_BOOST_USER_TOOLTIP, GOALIE_BOOST_MIN_MAX, GOALIE_BOOST_MAX_MAX);
 }
 
 void FreePlayTraining::RenderButton(const char* title, const char* tooltip, std::function<void()> target) {

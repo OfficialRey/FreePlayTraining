@@ -2,7 +2,8 @@
 #include "Utility.h"
 #include "PathingMode.h"
 
-PathingMode::PathingMode() : PathingBaseTime(_globalCvarManager->getCvar(PATHING_BASE_TIME_TITLE).getFloatValue()),
+PathingMode::PathingMode() : 
+	PathingBaseTime(_globalCvarManager->getCvar(PATHING_BASE_TIME_TITLE).getFloatValue()),
 	PathingBoostCollectionTime(_globalCvarManager->getCvar(PATHING_BOOST_COLLECTION_TITLE).getFloatValue()),
 	PathingBallTouchTime(_globalCvarManager->getCvar(PATHING_BALL_TOUCH_TITLE).getFloatValue()),
 	PathingBallHeightBoostBonus((double) _globalCvarManager->getCvar(PATHING_BALL_BONUS_TITLE).getIntValue() * BALL_HEIGHT_NORMALIZER),

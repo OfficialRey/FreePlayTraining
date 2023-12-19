@@ -45,9 +45,11 @@ private:
 
 	void RenderModeSelection();
 	void RenderModeSettings();
+
 	void RenderRecoveryOptions();
 	void RenderPathingOptions();
 	void RenderPopOptions();
+	void RenderGoalieOptions();
 
 	void RenderGameSettings();
 

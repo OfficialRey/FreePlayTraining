@@ -7,4 +7,4 @@ void AirDribbleMode::CreateShot() {
 
 void AirDribbleMode::RunGame(GameInformation*) {
 
-}         
+}

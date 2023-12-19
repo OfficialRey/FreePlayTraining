@@ -2,12 +2,14 @@
 
 #include "GoalieMode.h"
 
-GoalieMode::GoalieMode() :
+GoalieMode::GoalieMode() : 
+	GoalieBallSpeedFactor(_globalCvarManager->getCvar(GOALIE_BALL_SPEED_TITLE).getFloatValue()),
+	GoalieBallPlacementFactor(_globalCvarManager->getCvar(GOALIE_BALL_PLACEMENT_TITLE).getFloatValue()),
 	TrainingMode(
 		0,
 		0,
 		false,
-		100,
+		_globalCvarManager->getCvar(GOALIE_BOOST_MAX_TITLE).getIntValue(),
 		0,
 		false
 	) {
